@@ -56,7 +56,15 @@ def main():
     for shop in args.shops.split(","):
         run_crawl(shop, beers)
 
-    create_worksheet(beers)
+    should_crete_worksheet = False
+
+    for value in beers.values():
+        if len(value) > 0:
+            should_crete_worksheet = True
+            break
+
+    if should_crete_worksheet:
+        create_worksheet(beers)
 
 def run_crawl(shop, beers):
     if not os.path.exists('json'):
