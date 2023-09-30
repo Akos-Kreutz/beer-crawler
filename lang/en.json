@@ -1,0 +1,21 @@
+{
+    "BEER": "Beer",
+    "ABV": "ABV",
+    "STYLE": "Style",
+    "PACKAGE": "Package",
+    "COUNTRY": "Country",
+    "BREWERY": "Brewery",
+    "NAME": "Name",
+    "PRICE": "Price",
+    "CURRENCY": "Currency",
+    "SHOP": "Shop",
+    "LINK": "URL",
+    "NO_TEXT": "Text not found",
+    "CREATE_REPORT": "Creating Report",
+    "BROWSE_BEERSELECTION": "Browsing Beerselection",
+    "BROWSE_ONLY": "Browsing Only good beer",
+    "BROWSE_BEERSIDE": "Browsing Beerside",
+    "BROWSE_BEERBOX": "Browsing Beerbox",
+    "BROWSE_ONE": "Browsing One Beer",
+    "BROWSE_DRINKSTATION": "Browsing Drink Station"
+}
