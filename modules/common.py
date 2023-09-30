@@ -69,7 +69,7 @@ def get_element_attribute(element, attribute):
         return attr
     
 def get_tag_attribute(tag, attribute):
-    if tag is None or attribute not in tag.attrs.keys():
+    if tag is None or tag is not NotAvailable or attribute not in tag.attrs.keys():
         return NotAvailable.text
         
     try:
