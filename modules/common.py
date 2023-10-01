@@ -1,8 +1,10 @@
 import json
 import os
 import re
+import sys
 
 LANG = None
+SCRIPT_FOLDER = os.path.dirname(os.path.abspath(sys.argv[0]))
 
 class NotAvailable:
     text = "N/A"
@@ -21,16 +23,16 @@ class Beer:
 def write_json(list, module):
     new_json = json.dumps(list, ensure_ascii=False, indent=2).encode('utf8')
 
-    with open("json/{}.json".format(module), "w", encoding='utf8') as outfile:
+    with open("{}/{}.json".format(SCRIPT_FOLDER, module), "w", encoding='utf8') as outfile:
         outfile.write(new_json.decode())
 
 def read_json(module):
-     file =  open("{}.json".format(module), "r", encoding='utf8')
+     file =  open("{}/{}.json".format(SCRIPT_FOLDER, module), "r", encoding='utf8')
 
      return json.load(file)
 
 def is_json_exists(module):
-    return os.path.exists("{}.json".format(module))
+    return os.path.exists("{}/{}.json".format(SCRIPT_FOLDER, module))
 
 def get_new_entries(old_json, new_json):
     old_names = []

@@ -14,7 +14,7 @@ def run():
         old_json = read_json("json/" + MODULE_NAME)
         new_entries = get_new_entries(old_json, list)
     
-    write_json(list, os.path.basename(__file__).replace(".py", ""))
+    write_json(list, "json/" + MODULE_NAME)
     return new_entries
 
 def crawl(url):
