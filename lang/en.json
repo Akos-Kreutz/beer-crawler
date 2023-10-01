@@ -17,5 +17,6 @@
     "BROWSE_BEERSIDE": "Browsing Beerside",
     "BROWSE_BEERBOX": "Browsing Beerbox",
     "BROWSE_ONE": "Browsing One Beer",
-    "BROWSE_DRINKSTATION": "Browsing Drink Station"
+    "BROWSE_DRINKSTATION": "Browsing Drink Station",
+    "NO_NEW_BEER": "No new beer found."
 }

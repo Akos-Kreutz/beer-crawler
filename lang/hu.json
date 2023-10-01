@@ -17,5 +17,6 @@
     "BROWSE_BEERSIDE": "Beerside böngészése folyamatban",
     "BROWSE_BEERBOX": "Beerbox böngészése folyamatban",
     "BROWSE_ONE": "One Beer böngészése folyamatban",
-    "BROWSE_DRINKSTATION": "Drink Station böngészése folyamatban"
+    "BROWSE_DRINKSTATION": "Drink Station böngészése folyamatban",
+    "NO_NEW_BEER": "Nem található új sör."
 }

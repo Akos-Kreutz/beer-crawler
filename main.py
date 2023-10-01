@@ -65,6 +65,8 @@ def main():
 
     if should_crete_worksheet:
         create_worksheet(beers)
+    else:
+        print(get_lang_text("NO_NEW_BEER"))
 
 def run_crawl(shop, beers):
     if not os.path.exists('json'):
