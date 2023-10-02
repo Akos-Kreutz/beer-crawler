@@ -10,46 +10,9 @@ from datetime import datetime
 import argparse
 
 def main():
-    parser = argparse.ArgumentParser(
-                description="A Crawler in search of new craft beers.",
-                add_help=True,
-            )
-    parser.add_argument(
-                "--language",
-                "-l",
-                nargs=1,
-                type=str,
-                default="en",
-                help="Sets the language of the crawler. Available values: en, hu",
-            )
-    parser.add_argument(
-                "--shops",
-                "-s",
-                nargs=1,
-                type=str,
-                default="beerselection,csakajosor,onebeer,drinkstation,beerside,beerbox",
-                help="Determines which shops are searched. The value needs to be comma separated, like: beerselection,csakajosor. Available values: beerselection,csakajosor,onebeer,drinkstation,beerside,beerbox.",
-            )
-    parser.add_argument(
-                "--version",
-                "-v",
-                action="store_true",
-                help="Prints the version of the script and exits.",
-            )
-
-    args = parser.parse_args()
-
-    if args.version:
-        print("BeerCrawler 1.0")
-        exit()
+    args = check_usage()
 
     beers = {}
-
-    if type(args.language) is list:
-        args.language = args.language[0]
-
-    if type(args.shops) is list:
-        args.shops = args.shops[0]
 
     set_lang_file(args.language)
 
@@ -123,5 +86,47 @@ def create_worksheet(beers):
             print(".", end='', flush=True)
 
     workbook.close()
+
+def check_usage():
+    parser = argparse.ArgumentParser(
+                description="A Crawler in search of new craft beers.",
+                add_help=True,
+            )
+    parser.add_argument(
+                "--language",
+                "-l",
+                nargs=1,
+                type=str,
+                default="en",
+                help="Sets the language of the crawler. Available values: en, hu",
+            )
+    parser.add_argument(
+                "--shops",
+                "-s",
+                nargs=1,
+                type=str,
+                default="beerselection,csakajosor,onebeer,drinkstation,beerside,beerbox",
+                help="Determines which shops are searched. The value needs to be comma separated, like: beerselection,csakajosor. Available values: beerselection,csakajosor,onebeer,drinkstation,beerside,beerbox.",
+            )
+    parser.add_argument(
+                "--version",
+                "-v",
+                action="store_true",
+                help="Prints the version of the script and exits.",
+            )
+
+    args = parser.parse_args()
+
+    if args.version:
+        print("BeerCrawler 1.0")
+        exit()
+
+    if type(args.language) is list:
+        args.language = args.language[0]
+
+    if type(args.shops) is list:
+        args.shops = args.shops[0]
+
+    return args
 
 main()
