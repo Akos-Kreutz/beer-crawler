@@ -20,6 +20,10 @@ class Beer:
     abv = None
     link = None
 
+def create_folder(name):
+    if not os.path.exists("{}/{}".format(SCRIPT_FOLDER, name)):
+        os.makedirs("{}/{}".format(SCRIPT_FOLDER, name))
+
 def write_json(list, module):
     new_json = json.dumps(list, ensure_ascii=False, indent=2).encode('utf8')
 
