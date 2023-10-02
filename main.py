@@ -69,8 +69,8 @@ def main():
         print(get_lang_text("NO_NEW_BEER"))
 
 def run_crawl(shop, beers):
-    if not os.path.exists('json'):
-        os.makedirs('json')
+    if not os.path.exists("{}/json".format(SCRIPT_FOLDER)):
+        os.makedirs("{}/json".format(SCRIPT_FOLDER))
 
     match shop:
         case "beerselection":
@@ -89,10 +89,10 @@ def run_crawl(shop, beers):
 def create_worksheet(beers):
     print(get_lang_text("CREATE_REPORT"))
 
-    if not os.path.exists('report'):
-        os.makedirs('report')
+    if not os.path.exists("{}/report".format(SCRIPT_FOLDER)):
+        os.makedirs("{}/report".format(SCRIPT_FOLDER))
 
-    workbook = xlsxwriter.Workbook('report/' + datetime.now().strftime("%d-%m-%Y_%H-%M-%S") + '.xlsx')
+    workbook = xlsxwriter.Workbook("{}/report/{}.xlsx".format(SCRIPT_FOLDER, datetime.now().strftime("%d-%m-%Y_%H-%M-%S")))
     worksheet = workbook.add_worksheet("Beer Crawler")
 
     worksheet.write('A1', get_lang_text("NAME"))
