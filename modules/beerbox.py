@@ -8,7 +8,7 @@ MANDATORY_COOKIE_NAME = "adult_only_accepted"
 MANDATORY_COOKIE_VALUE = None
 
 def run():
-    print(get_lang_text("BROWSE_BEERBOX"))
+    log_and_print(get_lang_text("BROWSE_BEERBOX"))
     global MANDATORY_COOKIE_VALUE
     MANDATORY_COOKIE_VALUE = get_mandatory_cookie_value()
     list = crawl("https://beerbox.hu/product-category/sorok-8?page=1")

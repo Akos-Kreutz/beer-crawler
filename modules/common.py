@@ -2,6 +2,7 @@ import json
 import os
 import re
 import sys
+from datetime import datetime
 
 LANG = None
 SCRIPT_FOLDER = os.path.dirname(os.path.abspath(sys.argv[0]))
@@ -19,6 +20,17 @@ class Beer:
     currency = None
     abv = None
     link = None
+
+def log_and_print(message):
+    file_timestamp = datetime.now().strftime("%d-%m-%Y")
+    log_file = open("{}/log/{}.log".format(SCRIPT_FOLDER, file_timestamp), "a")
+
+    message_with_timestamp = "[{}] {}".format(datetime.now().strftime("%H:%M:%S"), message)
+
+    log_file.write("{}\n".format(message_with_timestamp))
+    log_file.close()
+
+    print(message_with_timestamp)
 
 def create_folder(name):
     if not os.path.exists("{}/{}".format(SCRIPT_FOLDER, name)):

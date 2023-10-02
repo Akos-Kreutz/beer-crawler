@@ -7,7 +7,7 @@ import re
 MODULE_NAME = os.path.basename(__file__).replace(".py", "")
 
 def run():
-    print(get_lang_text("BROWSE_DRINKSTATION"))
+    log_and_print(get_lang_text("BROWSE_DRINKSTATION"))
     list = crawl("https://drinkstation.hu/craft-sorok?stockfilter=1&sort=p.date_available&order=DESC&page=1")
     new_entries = list
 

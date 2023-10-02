@@ -6,7 +6,7 @@ import os
 MODULE_NAME = os.path.basename(__file__).replace(".py", "")
 
 def run():
-    print(get_lang_text("BROWSE_ONE"))
+    log_and_print(get_lang_text("BROWSE_ONE"))
     list = crawl("https://onebeer.hu/sorok?infinite_page=2")
     new_entries = list
 

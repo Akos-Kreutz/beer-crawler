@@ -10,26 +10,31 @@ from datetime import datetime
 import argparse
 
 def main():
-    args = check_usage()
+    try:
+        create_folder("log")
 
-    beers = {}
+        args = check_usage()
 
-    set_lang_file(args.language)
+        beers = {}
 
-    for shop in args.shops.split(","):
-        run_crawl(shop, beers)
+        set_lang_file(args.language)
 
-    should_crete_worksheet = False
+        for shop in args.shops.split(","):
+            run_crawl(shop, beers)
 
-    for value in beers.values():
-        if len(value) > 0:
-            should_crete_worksheet = True
-            break
+        should_crete_worksheet = False
 
-    if should_crete_worksheet:
-        create_worksheet(beers)
-    else:
-        print(get_lang_text("NO_NEW_BEER"))
+        for value in beers.values():
+            if len(value) > 0:
+                should_crete_worksheet = True
+                break
+
+        if should_crete_worksheet:
+            create_worksheet(beers)
+        else:
+            log_and_print(get_lang_text("NO_NEW_BEER"))
+    except Exception as error:
+        log_and_print(error)
 
 def run_crawl(shop, beers):
     create_folder("json")
@@ -49,7 +54,7 @@ def run_crawl(shop, beers):
             beers["Beerbox"] = beerbox_run()
 
 def create_worksheet(beers):
-    print(get_lang_text("CREATE_REPORT"))
+    log_and_print(get_lang_text("CREATE_REPORT"))
 
     create_folder("report")
 
@@ -116,7 +121,7 @@ def check_usage():
     args = parser.parse_args()
 
     if args.version:
-        print("BeerCrawler 1.0")
+        log_and_print("BeerCrawler 1.0")
         exit()
 
     if type(args.language) is list:

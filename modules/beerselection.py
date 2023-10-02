@@ -6,7 +6,7 @@ import os
 MODULE_NAME = os.path.basename(__file__).replace(".py", "")
 
 def run():
-    print(get_lang_text("BROWSE_BEERSELECTION"))
+    log_and_print(get_lang_text("BROWSE_BEERSELECTION"))
     list = crawl("https://www.beerselection.hu/index.php?route=product/list&stockfilter=1&latest=40&page=1#content")
     new_entries = list
 
