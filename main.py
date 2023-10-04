@@ -20,6 +20,12 @@ def main():
 
         set_lang_file(args.language)
 
+        if args.clean:
+            rotate_files(0, "{}/log".format(SCRIPT_FOLDER))
+            rotate_files(0, "{}/report".format(SCRIPT_FOLDER))
+            rotate_files(0, "{}/json".format(SCRIPT_FOLDER))
+            exit()
+
         if args.rotate < 0:
             log_and_print(get_lang_text("DISABLE_ROTATE"))
         else:
@@ -131,6 +137,12 @@ def check_usage():
                 type=int,
                 default="20",
                 help="The script will keep the set number of newest files in the log & report folder and delete the others. To disable this feature set the value lower than zero. By default the script will keep 20 of the newest files.",
+            )
+    parser.add_argument(
+                "--clean",
+                "-c",
+                action="store_true",
+                help="Deletes all files from the log, report and json folders then exits.",
             )
 
     args = parser.parse_args()
