@@ -5,6 +5,7 @@ from modules.drinkstation import run as drinkstation_run
 from modules.beerside import run as beerside_run
 from modules.beerbox import run as beerbox_run
 from modules.common import *
+import traceback
 import xlsxwriter
 from datetime import datetime
 import argparse
@@ -39,8 +40,8 @@ def main():
             create_worksheet(beers)
         else:
             log_and_print(get_lang_text("NO_NEW_BEER"))
-    except Exception as error:
-        log_and_print(error)
+    except:
+        log_and_print(traceback.format_exc())
 
 def run_crawl(shop, beers):
     create_folder("json")

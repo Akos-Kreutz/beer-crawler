@@ -34,12 +34,12 @@ def log_and_print(message):
     file_timestamp = datetime.now().strftime("%d-%m-%Y")
     log_file = open("{}/log/{}.log".format(SCRIPT_FOLDER, file_timestamp), "a")
 
-    message_with_timestamp = "[{}] {}".format(datetime.now().strftime("%H:%M:%S"), message)
+    for line in message.splitlines():
+        line_with_timestamp = "[{}] {}".format(datetime.now().strftime("%H:%M:%S"), line)
+        log_file.write("{}\n".format(line_with_timestamp))
+        print(line_with_timestamp)
 
-    log_file.write("{}\n".format(message_with_timestamp))
     log_file.close()
-
-    print(message_with_timestamp)
 
 def create_folder(name):
     if not os.path.exists("{}/{}".format(SCRIPT_FOLDER, name)):
