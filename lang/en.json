@@ -18,5 +18,7 @@
     "BROWSE_BEERBOX": "Browsing Beerbox",
     "BROWSE_ONE": "Browsing One Beer",
     "BROWSE_DRINKSTATION": "Browsing Drink Station",
-    "NO_NEW_BEER": "No new beer found."
+    "NO_NEW_BEER": "No new beer found.",
+    "DELETE_FILE": "Deleting the following file",
+    "DISABLE_ROTATE": "File rotation is disabled."
 }

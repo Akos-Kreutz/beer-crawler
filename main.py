@@ -19,6 +19,12 @@ def main():
 
         set_lang_file(args.language)
 
+        if args.rotate < 0:
+            log_and_print(get_lang_text("DISABLE_ROTATE"))
+        else:
+            rotate_files(args.rotate, "{}/log".format(SCRIPT_FOLDER))
+            rotate_files(args.rotate, "{}/report".format(SCRIPT_FOLDER))
+
         for shop in args.shops.split(","):
             run_crawl(shop, beers)
 
@@ -117,12 +123,23 @@ def check_usage():
                 action="store_true",
                 help="Prints the version of the script and exits.",
             )
+    parser.add_argument(
+                "--rotate",
+                "-r",
+                nargs=1,
+                type=int,
+                default="20",
+                help="The script will keep the set number of newest files in the log & report folder and delete the others. To disable this feature set the value lower than zero. By default the script will keep 20 of the newest files.",
+            )
 
     args = parser.parse_args()
 
     if args.version:
         log_and_print("BeerCrawler 1.0")
         exit()
+
+    if type(args.rotate) is list:
+        args.rotate = args.rotate[0]
 
     if type(args.language) is list:
         args.language = args.language[0]

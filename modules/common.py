@@ -3,6 +3,7 @@ import os
 import re
 import sys
 from datetime import datetime
+from pathlib import Path
 
 LANG = None
 SCRIPT_FOLDER = os.path.dirname(os.path.abspath(sys.argv[0]))
@@ -20,6 +21,14 @@ class Beer:
     currency = None
     abv = None
     link = None
+
+def rotate_files(number_of_files_to_keep, folder):
+    files = sorted(Path(folder).iterdir(), key=os.path.getmtime, reverse=True)
+
+    for i in range(number_of_files_to_keep, len(files)):
+        file = files[i]
+        log_and_print("{}: {}".format(get_lang_text("DELETE_FILE"), file))
+        os.remove(file)
 
 def log_and_print(message):
     file_timestamp = datetime.now().strftime("%d-%m-%Y")
