@@ -23,6 +23,8 @@ Currently supported languages:
 - `--language` or `-l`: Use this to set the language, currently supported values: `en`, `hu`. By default english is used.
 - `--shop` or `-s`: Use this to set the shops you want to crawl, this is a comma separated list. Example: `beerselection,csakajosor`, currently supported values: `beerselection,csakajosor,onebeer,drinkstation,beerside,beerbox`. By default all the shops are checked.
 - `--version` or `-v`: Prints the version of the script and exits.
+- `--rotate` or `-r`: The script will keep the set number of newest files in the log & report folder and delete the others. To disable this feature set the value lower than zero. By default the script will keep 20 of the newest files.
+- `--clean` or `-c`: Deletes all files from the log, report and json folders then exits.
 
 ## Requirements
 - Python 3.10+
