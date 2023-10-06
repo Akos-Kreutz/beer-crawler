@@ -60,14 +60,15 @@ def is_json_exists(module):
     return os.path.exists("{}/{}.json".format(SCRIPT_FOLDER, module))
 
 def get_new_entries(old_json, new_json):
-    old_names = []
+    old_beers = []
     new_beers = []
 
     for i in range(len(old_json)):
-        old_names.append(old_json[i]["name"])
+        old_beers.append(old_json[i]["name"])
+        old_beers.append(old_json[i]["link"])
 
     for i in range(len(new_json)):
-        if new_json[i]["name"] not in old_names:
+        if new_json[i]["name"] not in old_beers and new_json[i]["link"] not in old_beers:
             new_beers.append(new_json[i])
 
     return new_beers
