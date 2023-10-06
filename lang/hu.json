@@ -20,5 +20,6 @@
     "BROWSE_DRINKSTATION": "Drink Station böngészése folyamatban",
     "NO_NEW_BEER": "Nem található új sör.",
     "DELETE_FILE": "Az alábbi fájl törlése folyamatban",
-    "DISABLE_ROTATE": "Fájl törlés kikapcsolva."
+    "DISABLE_ROTATE": "Fájl törlés kikapcsolva.",
+    "EXIT": "A böngészés megszakításra került."
 }

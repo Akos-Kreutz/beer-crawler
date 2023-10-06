@@ -3,6 +3,7 @@ from modules.common import *
 import requests
 import os
 import re
+import time
 
 MODULE_NAME = os.path.basename(__file__).replace(".py", "")
 
@@ -29,16 +30,26 @@ def crawl(url):
         if 'href' not in element.attrs:
             continue
 
-        sub_soup = BeautifulSoup(requests.get(element['href']).text, "html.parser")
-        beer = Beer()
+        try_counter = 0
 
-        beer.link = element['href']
-        beer.style = NotAvailable.text
-        beer.country = NotAvailable.text
-        beer.brewery = get_element_attribute(get_element_attribute(get_element(sub_soup, "tr", "product-parameter-row manufacturer-param-row"), "span"), "text")
-        beer.price = get_tag_attribute(get_element(get_element(sub_soup, "div", "product-page-price-line"), "meta", itemprop="price"), "content") 
-        beer.currency = get_tag_attribute(get_element(get_element(sub_soup, "div", "product-page-price-line"), "meta", itemprop="pricecurrency"), "content")
-        break_down_name(sub_soup, beer)
+        while try_counter < 3:
+            try:
+                sub_soup = BeautifulSoup(requests.get(element['href']).text, "html.parser")
+                beer = Beer()
+
+                beer.link = element['href']
+                beer.style = NotAvailable.text
+                beer.country = NotAvailable.text
+                beer.brewery = get_element_attribute(get_element_attribute(get_element(sub_soup, "tr", "product-parameter-row manufacturer-param-row"), "span"), "text")
+                beer.price = get_tag_attribute(get_element(get_element(sub_soup, "div", "product-page-price-line"), "meta", itemprop="price"), "content") 
+                beer.currency = get_tag_attribute(get_element(get_element(sub_soup, "div", "product-page-price-line"), "meta", itemprop="pricecurrency"), "content")
+                break_down_name(sub_soup, beer)
+                try_counter = 3
+            except KeyboardInterrupt:
+                raise
+            except:
+                time.sleep(5)
+                try_counter = try_counter + 1
 
         list.append(beer.__dict__)
         print(".", end='', flush=True)

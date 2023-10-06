@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup, ResultSet
 from modules.common import *
 import requests
 import os
+import time
 
 MODULE_NAME = os.path.basename(__file__).replace(".py", "")
 
@@ -28,15 +29,25 @@ def crawl(url):
         if 'href' not in element.attrs:
             continue
 
-        sub_soup = BeautifulSoup(requests.get("https://www.beerside.hu" + element['href']).text, "html.parser")
-        beer = Beer()
+        try_counter = 0
 
-        beer.link = "https://www.beerside.hu" + element['href']
-        set_attributes(sub_soup, beer)
-        set_price_and_currency(sub_soup, beer)
-        beer.country = NotAvailable.text
-        beer.brewery = NotAvailable.text
-        beer.name = get_formatted_name(get_element_attribute(get_element(sub_soup, "h1", itemprop="name"), "text"), beer.brewery)
+        while try_counter < 3:
+            try:
+                sub_soup = BeautifulSoup(requests.get("https://www.beerside.hu" + element['href']).text, "html.parser")
+                beer = Beer()
+
+                beer.link = "https://www.beerside.hu" + element['href']
+                set_attributes(sub_soup, beer)
+                set_price_and_currency(sub_soup, beer)
+                beer.country = NotAvailable.text
+                beer.brewery = NotAvailable.text
+                beer.name = get_formatted_name(get_element_attribute(get_element(sub_soup, "h1", itemprop="name"), "text"), beer.brewery)
+                try_counter = 3
+            except KeyboardInterrupt:
+                raise
+            except:
+                time.sleep(5)
+                try_counter = try_counter + 1
 
         list.append(beer.__dict__)
         print(".", end='', flush=True)

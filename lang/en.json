@@ -20,5 +20,6 @@
     "BROWSE_DRINKSTATION": "Browsing Drink Station",
     "NO_NEW_BEER": "No new beer found.",
     "DELETE_FILE": "Deleting the following file",
-    "DISABLE_ROTATE": "File rotation is disabled."
+    "DISABLE_ROTATE": "File rotation is disabled.",
+    "EXIT": "The beer crawling has been interrupted."
 }

@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 from modules.common import *
 import requests
 import os
+import time
 
 MODULE_NAME = os.path.basename(__file__).replace(".py", "")
 MANDATORY_COOKIE_NAME = "adult_only_accepted"
@@ -39,22 +40,32 @@ def crawl(url):
         if sub_element is None or 'href' not in sub_element.attrs:
             continue
 
-        sub_soup = BeautifulSoup(requests.get(sub_element['href'], cookies={MANDATORY_COOKIE_NAME:MANDATORY_COOKIE_VALUE}).text, "html.parser")
-        beer = Beer()
+        try_counter = 0
 
-        beer.link = sub_element['href']
-        style_and_abv = get_element_attribute(get_element(sub_soup, "div", "product-content"), "text")
-        abv = re.search(r'[0-9]*\,*\.*[0-9]+[%]{1}', style_and_abv)
-        if abv is None:
-            beer.abv = NotAvailable.text
-        else:
-            beer.abv = abv.group(0)
+        while try_counter < 3:
+            try:
+                sub_soup = BeautifulSoup(requests.get(sub_element['href'], cookies={MANDATORY_COOKIE_NAME:MANDATORY_COOKIE_VALUE}).text, "html.parser")
+                beer = Beer()
 
-        beer.style = style_and_abv.replace(beer.abv, "").strip()
-        set_attributes(sub_soup, beer)
-        beer.name = get_formatted_name(get_element_attribute(get_element(sub_soup, "h3", "breadcum-page-title text-center"), "text"), beer.brewery)
-        beer.price = get_element_attribute(get_element(get_element(sub_soup, "ul", "d-sm-flex align-items-sm-center"), "span"), "text").replace("Ft", "").replace(" ", "")
-        beer.currency = "HUF"
+                beer.link = sub_element['href']
+                style_and_abv = get_element_attribute(get_element(sub_soup, "div", "product-content"), "text")
+                abv = re.search(r'[0-9]*\,*\.*[0-9]+[%]{1}', style_and_abv)
+                if abv is None:
+                    beer.abv = NotAvailable.text
+                else:
+                    beer.abv = abv.group(0)
+
+                beer.style = style_and_abv.replace(beer.abv, "").strip()
+                set_attributes(sub_soup, beer)
+                beer.name = get_formatted_name(get_element_attribute(get_element(sub_soup, "h3", "breadcum-page-title text-center"), "text"), beer.brewery)
+                beer.price = get_element_attribute(get_element(get_element(sub_soup, "ul", "d-sm-flex align-items-sm-center"), "span"), "text").replace("Ft", "").replace(" ", "")
+                beer.currency = "HUF"
+                try_counter = 3
+            except KeyboardInterrupt:
+                raise
+            except:
+                time.sleep(5)
+                try_counter = try_counter + 1
 
         list.append(beer.__dict__)
         print(".", end='', flush=True)

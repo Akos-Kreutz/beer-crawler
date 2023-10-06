@@ -46,7 +46,9 @@ def main():
             create_worksheet(beers)
         else:
             log_and_print(get_lang_text("NO_NEW_BEER"))
-    except Exception as e:
+    except KeyboardInterrupt:
+        log_and_print(get_lang_text("EXIT"))
+    except Exception:
         log_and_print(traceback.format_exc())
 
 def run_crawl(shop, beers):

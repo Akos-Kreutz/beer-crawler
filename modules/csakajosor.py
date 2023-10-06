@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 from modules.common import *
 import requests
 import os
+import time
 
 MODULE_NAME = os.path.basename(__file__).replace(".py", "")
 
@@ -28,18 +29,28 @@ def crawl(url):
         if 'href' not in element.attrs:
             continue
 
-        sub_soup = BeautifulSoup(requests.get(element['href']).text, "html.parser")
-        beer = Beer()
+        try_counter = 0
 
-        beer.link = element['href']
-        beer.abv = get_element_attribute(get_element(sub_soup, "td", "param-value featured-param-label featured-alkoholfok"), "text")
-        beer.style = get_element_attribute(get_element(sub_soup, "td", "param-value featured-param-label featured-tipus"), "text")
-        beer.package = get_element_attribute(get_element(sub_soup, "td", "param-value featured-param-label featured-urtartalom"), "text") + " " + get_element_attribute(get_element(sub_soup, "td", "param-value featured-param-label featured-kiszereles"), "text")
-        beer.country = get_element_attribute(get_element(sub_soup, "td", "param-value featured-param-label featured-orszag"), "text")
-        beer.brewery = get_element_attribute(get_element_attribute(get_element(sub_soup, "tr", "product-parameter-row manufacturer-param-row"), "span"), "text")
-        beer.name = get_formatted_name(get_element_attribute(get_element(sub_soup, "h1", "page-head-title product-page-head-title position-relative"), "text"), beer.brewery)
-        beer.price = get_tag_attribute(get_element(get_element(sub_soup, "div", "product-page-price-line"), "meta", itemprop="price"), "content") 
-        beer.currency = get_tag_attribute(get_element(get_element(sub_soup, "div", "product-page-price-line"), "meta", itemprop="pricecurrency"), "content")
+        while try_counter < 3:
+            try:
+                sub_soup = BeautifulSoup(requests.get(element['href']).text, "html.parser")
+                beer = Beer()
+
+                beer.link = element['href']
+                beer.abv = get_element_attribute(get_element(sub_soup, "td", "param-value featured-param-label featured-alkoholfok"), "text")
+                beer.style = get_element_attribute(get_element(sub_soup, "td", "param-value featured-param-label featured-tipus"), "text")
+                beer.package = get_element_attribute(get_element(sub_soup, "td", "param-value featured-param-label featured-urtartalom"), "text") + " " + get_element_attribute(get_element(sub_soup, "td", "param-value featured-param-label featured-kiszereles"), "text")
+                beer.country = get_element_attribute(get_element(sub_soup, "td", "param-value featured-param-label featured-orszag"), "text")
+                beer.brewery = get_element_attribute(get_element_attribute(get_element(sub_soup, "tr", "product-parameter-row manufacturer-param-row"), "span"), "text")
+                beer.name = get_formatted_name(get_element_attribute(get_element(sub_soup, "h1", "page-head-title product-page-head-title position-relative"), "text"), beer.brewery)
+                beer.price = get_tag_attribute(get_element(get_element(sub_soup, "div", "product-page-price-line"), "meta", itemprop="price"), "content") 
+                beer.currency = get_tag_attribute(get_element(get_element(sub_soup, "div", "product-page-price-line"), "meta", itemprop="pricecurrency"), "content")
+                try_counter = 3
+            except KeyboardInterrupt:
+                raise
+            except:
+                time.sleep(5)
+                try_counter = try_counter + 1
 
         list.append(beer.__dict__)
         print(".", end='', flush=True)
