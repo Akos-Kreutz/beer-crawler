@@ -37,12 +37,12 @@ def crawl(url):
                 beer = Beer()
 
                 beer.link = element['href']
-                beer.abv = get_element_attribute(get_element(get_element(sub_soup, "div", {"id": "page_artdet_product_param_spec_552805"}), "div", "artdet__spec-param-value"), "text").replace(" %", "%")
-                beer.style = get_element_attribute(get_element(get_element(sub_soup, "div", {"id": "page_artdet_product_param_spec_552719"}), "div", "artdet__spec-param-value"), "text")
-                beer.package = get_element_attribute(get_element(get_element(sub_soup, "div", {"id": "page_artdet_product_param_spec_552812"}), "div", "artdet__spec-param-value"), "text")
+                beer.abv = get_element_attribute(get_element(get_element(sub_soup, "div", {"id": "page_artdet_product_param_spec_3304722"}), "div", "artdet__spec-param-value"), "text").replace(" %", "%")
+                beer.style = get_element_attribute(get_element(get_element(sub_soup, "div", {"id": "page_artdet_product_param_spec_3304707"}), "div", "artdet__spec-param-value"), "text")
+                beer.package = get_element_attribute(get_element(get_element(sub_soup, "div", {"id": "page_artdet_product_param_spec_3304727"}), "div", "artdet__spec-param-value"), "text")
                 beer.country = NotAvailable.text
-                beer.brewery = get_element_attribute(get_element(get_element(sub_soup, "div", {"id": "page_artdet_product_param_spec_552793"}), "div", "artdet__spec-param-value"), "text")
-                beer.name = get_formatted_name(get_element_attribute(get_element(sub_soup, "h1", "artdet__name line-clamp--3-12"), "text"), beer.brewery)
+                beer.brewery = get_element_attribute(get_element(get_element(sub_soup, "div", {"id": "page_artdet_product_param_spec_3304727"}), "div", "artdet__spec-param-value"), "text")
+                beer.name = get_formatted_name(get_element_attribute(get_element(sub_soup, "h1", "artdet__name line-clamp--3-12 mb-0"), "text"), beer.brewery)
 
                 price = get_element_attribute(get_element(sub_soup, "span", "artdet__price-discount product-price--sale"), "text")
                 if price == NotAvailable.text:
