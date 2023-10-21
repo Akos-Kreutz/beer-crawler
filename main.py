@@ -137,8 +137,8 @@ def check_usage():
                 "-r",
                 nargs=1,
                 type=int,
-                default="20",
-                help="The script will keep the set number of newest files in the log & report folder and delete the others. To disable this feature set the value lower than zero. By default the script will keep 20 of the newest files.",
+                default="5",
+                help="The script will keep the set number of newest files in the log & report folder and delete the others. To disable this feature set the value lower than zero. By default the script will keep 5 of the newest files.",
             )
     parser.add_argument(
                 "--clean",
