@@ -21,5 +21,15 @@
     "NO_NEW_BEER": "No new beer found.",
     "DELETE_FILE": "Deleting the following file",
     "DISABLE_ROTATE": "File rotation is disabled.",
-    "EXIT": "The beer crawling has been interrupted."
+    "EXIT": "The beer crawling has been interrupted.",
+    "en": "English",
+    "hu": "Hungarian",
+    "RUN": "Run",
+    "LANG": "Languages",
+    "ROTATE": "Rotate",
+    "CLEAN": "Clean",
+    "SHOPS": "Shops",
+    "WRONG_ROTATION_VALUE": "The value provided for rotation is wrong, setting the default value.",
+    "BIG_ROTATION_VALUE": "The value provided for rotation is too big, setting the value for 365.",
+    "REPORT_CREATED": "Report successfully created."
 }

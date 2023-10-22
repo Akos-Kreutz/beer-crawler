@@ -21,5 +21,15 @@
     "NO_NEW_BEER": "Nem található új sör.",
     "DELETE_FILE": "Az alábbi fájl törlése folyamatban",
     "DISABLE_ROTATE": "Fájl törlés kikapcsolva.",
-    "EXIT": "A böngészés megszakításra került."
+    "EXIT": "A böngészés megszakításra került.",
+    "en": "Angol",
+    "hu": "Magyar",
+    "RUN": "Böngészés Indítása",
+    "LANG": "Nyelvek",
+    "ROTATE": "Fájl rotálás",
+    "CLEAN": "Összes adat fájl törlése",
+    "SHOPS": "Boltok",
+    "WRONG_ROTATION_VALUE": "A fájl rotálásnak megadott érték rossz, az alapértelmezett érték kerül beállításra",
+    "BIG_ROTATION_VALUE": "A fájl rotálásnak megadott érték túl nagy, 365 kerül beállításra",
+    "REPORT_CREATED": "A sör lista sikeresen elkészült"
 }

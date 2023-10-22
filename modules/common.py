@@ -4,10 +4,11 @@ import re
 import sys
 from datetime import datetime
 from pathlib import Path
+import argparse
 
 LANG = None
 SCRIPT_FOLDER = os.path.dirname(os.path.abspath(sys.argv[0]))
-
+VERSION="2.0"
 class NotAvailable:
     text = "N/A"
 
@@ -131,3 +132,119 @@ def get_lang_text(text):
         return LANG.get(text)
     
     return LANG.get("NO_TEXT")
+
+def get_lang_code(code):
+    values = list(LANG.values())
+
+    if code in values:
+        keys = list(LANG.keys())
+        return keys[values.index(code)]
+    
+    print("Language code not found, returning english language code.")
+    return "en"
+
+def get_shops(shop_string):
+    shops = []
+
+    for shop in shop_string.split(","):
+        shops.append(shop)
+
+    return shops
+
+def get_name_with_version():
+    return "Beer Crawler v{}".format(VERSION)
+
+def get_rotation_value(value):
+    try:
+        value = int(value)
+    except:
+        log_and_print(LANG.get("WRONG_ROTATION_VALUE"))
+        value = 5
+
+    if value > 365:
+        log_and_print(LANG.get("BIG_ROTATION_VALUE"))
+        value = 365
+
+    return value
+
+def get_translated_list(list):
+    translated_list = []
+
+    for element in list:
+        translated_list.append(get_lang_text(element))
+
+    return translated_list
+
+def get_languages():
+    files = sorted(Path("{}/lang".format(SCRIPT_FOLDER)).iterdir())
+    langs = []
+
+    for file in files:
+        langs.append(Path(file).stem)
+
+    return langs
+
+def get_args():
+    parser = argparse.ArgumentParser(
+                description="A Crawler in search of new craft beers.",
+                add_help=True,
+            )
+    parser.add_argument(
+                "--language",
+                "-l",
+                nargs=1,
+                type=str,
+                default="en",
+                help="Sets the language of the crawler. Available values: en, hu",
+            )
+    parser.add_argument(
+                "--shops",
+                "-s",
+                nargs=1,
+                type=str,
+                default="beerselection,csakajosor,onebeer,drinkstation,beerside,beerbox",
+                help="Determines which shops are searched. The value needs to be comma separated, like: beerselection,csakajosor. Available values: beerselection,csakajosor,onebeer,drinkstation,beerside,beerbox.",
+            )
+    parser.add_argument(
+                "--version",
+                "-v",
+                action="store_true",
+                help="Prints the version of the script and exits.",
+            )
+    parser.add_argument(
+                "--rotate",
+                "-r",
+                nargs=1,
+                type=int,
+                default="5",
+                help="The script will keep the set number of newest files in the log & report folder and delete the others. To disable this feature set the value lower than zero. By default the script will keep 5 of the newest files.",
+            )
+    parser.add_argument(
+                "--clean",
+                "-c",
+                action="store_true",
+                help="Deletes all files from the log, report and json folders then exits.",
+            )
+    parser.add_argument(
+                "--gui",
+                "-g",
+                action="store_true",
+                help="Starts the application in the GUI mode.",
+            )
+
+    args = parser.parse_args()
+
+    if args.version:
+        log_and_print(get_name_with_version())
+        exit()
+
+    if type(args.rotate) is list:
+        args.rotate = get_rotation_value(args.rotate[0])
+
+    if type(args.language) is list:
+        args.language = args.language[0]
+
+    if type(args.shops) is list:
+        args.shops = args.shops[0]
+
+    return args

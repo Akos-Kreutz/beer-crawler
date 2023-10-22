@@ -1,3 +1,12 @@
+from tkinter import *
+from tkinter import ttk
+from tkinter import messagebox
+from datetime import datetime
+
+import threading
+import traceback
+import xlsxwriter
+
 from modules.beerselection import run as beerselection_run
 from modules.csakajosor import run as csak_a_run
 from modules.onebeer import run as onebeer_run
@@ -5,51 +14,95 @@ from modules.drinkstation import run as drinkstation_run
 from modules.beerside import run as beerside_run
 from modules.beerbox import run as beerbox_run
 from modules.common import *
-import traceback
-import xlsxwriter
-from datetime import datetime
-import argparse
 
 def main():
     try:
         create_folder("log")
 
-        args = check_usage()
-
-        beers = {}
+        args = get_args()
 
         set_lang_file(args.language)
 
-        if args.clean:
-            rotate_files(0, "{}/log".format(SCRIPT_FOLDER))
-            rotate_files(0, "{}/report".format(SCRIPT_FOLDER))
-            rotate_files(0, "{}/json".format(SCRIPT_FOLDER))
-            exit()
+        global top
+        top = None
 
-        if args.rotate < 0:
-            log_and_print(get_lang_text("DISABLE_ROTATE"))
+        if args.gui:
+            top = Tk()
+            top.geometry("230x265")
+            top.resizable(False, False)
+            top.title(get_name_with_version())
+            top.protocol("WM_DELETE_WINDOW", gui_window_closed)
+            configure_gui(args)
+            top.mainloop()
+
         else:
-            rotate_files(args.rotate, "{}/log".format(SCRIPT_FOLDER))
-            rotate_files(args.rotate, "{}/report".format(SCRIPT_FOLDER))
+            run(args)
 
-        for shop in args.shops.split(","):
-            run_crawl(shop, beers)
-
-        should_crete_worksheet = False
-
-        for value in beers.values():
-            if len(value) > 0:
-                should_crete_worksheet = True
-                break
-
-        if should_crete_worksheet:
-            create_worksheet(beers)
-        else:
-            log_and_print(get_lang_text("NO_NEW_BEER"))
     except KeyboardInterrupt:
         log_and_print(get_lang_text("EXIT"))
+        os._exit(0)
     except Exception:
         log_and_print(traceback.format_exc())
+
+def gui_window_closed():
+    log_and_print(get_lang_text("EXIT"))
+    top.quit()
+    top.destroy()
+    os._exit(0)
+
+def run(args):
+    beers = {}
+
+    if args.clean:
+        rotate_files(0, "{}/log".format(SCRIPT_FOLDER))
+        rotate_files(0, "{}/report".format(SCRIPT_FOLDER))
+        rotate_files(0, "{}/json".format(SCRIPT_FOLDER))
+        exit()
+
+    if args.rotate < 0:
+        log_and_print(get_lang_text("DISABLE_ROTATE"))
+    else:
+        rotate_files(args.rotate, "{}/log".format(SCRIPT_FOLDER))
+        rotate_files(args.rotate, "{}/report".format(SCRIPT_FOLDER))
+
+    crawl_threads = []
+
+    for shop in args.shops.split(","):
+        crawl_thread = threading.Thread(target = run_crawl, args = (shop, beers))
+        crawl_threads.append(crawl_thread)
+        crawl_thread.start()
+
+    if is_gui_active():
+        gui_run(crawl_threads, beers)
+    else:
+        cli_run(crawl_threads, beers)
+
+def cli_run(crawl_threads, beers):
+    for crawl_thread in crawl_threads:
+        crawl_thread.join(1)
+
+    create_template(beers)
+
+def gui_run(crawl_threads, beers):
+    for crawl_thread in crawl_threads:
+        monitor_crawl_thread(crawl_thread)
+
+    monitor_crawl_progress(beers)
+
+def create_template(beers):
+    should_create_worksheet = False
+
+    for value in beers.values():
+        if len(value) > 0:
+            should_create_worksheet = True
+            break
+
+    if should_create_worksheet:
+        create_worksheet(beers)
+    else:
+        increase_progress()
+        create_message_box(get_lang_text("NO_NEW_BEER"))
+        log_and_print(get_lang_text("NO_NEW_BEER"))
 
 def run_crawl(shop, beers):
     create_folder("json")
@@ -104,64 +157,154 @@ def create_worksheet(beers):
             print(".", end='', flush=True)
 
     workbook.close()
+    
+    increase_progress()
+    log_and_print(get_lang_text("REPORT_CREATED"))
+    create_message_box(get_lang_text("REPORT_CREATED"))
 
-def check_usage():
-    parser = argparse.ArgumentParser(
-                description="A Crawler in search of new craft beers.",
-                add_help=True,
-            )
-    parser.add_argument(
-                "--language",
-                "-l",
-                nargs=1,
-                type=str,
-                default="en",
-                help="Sets the language of the crawler. Available values: en, hu",
-            )
-    parser.add_argument(
-                "--shops",
-                "-s",
-                nargs=1,
-                type=str,
-                default="beerselection,csakajosor,onebeer,drinkstation,beerside,beerbox",
-                help="Determines which shops are searched. The value needs to be comma separated, like: beerselection,csakajosor. Available values: beerselection,csakajosor,onebeer,drinkstation,beerside,beerbox.",
-            )
-    parser.add_argument(
-                "--version",
-                "-v",
-                action="store_true",
-                help="Prints the version of the script and exits.",
-            )
-    parser.add_argument(
-                "--rotate",
-                "-r",
-                nargs=1,
-                type=int,
-                default="5",
-                help="The script will keep the set number of newest files in the log & report folder and delete the others. To disable this feature set the value lower than zero. By default the script will keep 5 of the newest files.",
-            )
-    parser.add_argument(
-                "--clean",
-                "-c",
-                action="store_true",
-                help="Deletes all files from the log, report and json folders then exits.",
-            )
+def monitor_crawl_thread(crawl_thread):
+    if crawl_thread.is_alive():
+        top.after(100, lambda: monitor_crawl_thread(crawl_thread))
+    else:
+        increase_progress()
 
-    args = parser.parse_args()
+def monitor_crawl_progress(beers):
+    if progress_bar['value'] < (100 - (STEP + 1)):
+        top.after(100, lambda: monitor_crawl_progress(beers))
+    else:
+        create_template(beers)
 
-    if args.version:
-        log_and_print("BeerCrawler 1.0")
-        exit()
+def create_message_box(message):
+    if not is_gui_active():
+        return
 
-    if type(args.rotate) is list:
-        args.rotate = args.rotate[0]
+    if progress_bar['value'] >= 100:
+        messagebox.showinfo(title="Finished", message=message,)
+        progress_bar['value'] = 0
+        progress_bar.update()
 
-    if type(args.language) is list:
-        args.language = args.language[0]
+    run_button['state'] = NORMAL
 
-    if type(args.shops) is list:
-        args.shops = args.shops[0]
+def increase_progress():
+    if not is_gui_active():
+        return
+    
+    if progress_bar['value'] < 100:
+        progress_bar['value'] += STEP
 
-    return args
+    progress_bar.update()
+
+def gui_set_args(args, rotate_entry, clean_var, shop_list):
+    args.rotate = get_rotation_value(rotate_entry.get())
+
+    if clean_var.get() == 0:
+        args.clean = False
+    else:
+        args.clean = True
+
+    list = []
+    for shop in shop_list.curselection():
+        list.append(shop_list.get(shop))
+
+    args.shops = ",".join(list)
+
+    global STEP
+    STEP = round(100 / (len(list) + 1)) + 1
+
+    run_button['state'] = DISABLED
+    run(args)
+
+def change_language(event):
+    set_lang_file(get_lang_code(event.widget.get()))
+
+    lang_combo.config(values=get_translated_list(get_languages()))
+
+    lang_label.config(text=get_lang_text("LANG"))
+    rotate_label.config(text=get_lang_text("ROTATE"))
+    clean_label.config(text=get_lang_text("CLEAN"))
+    shop_label.config(text=get_lang_text("SHOPS"))
+    run_button.config(text=get_lang_text("RUN"))
+
+def is_gui_active():
+    return top is not None
+
+def configure_gui(args):
+    shops = get_shops(args.shops)
+
+    lang_frame = Frame(top)
+    lang_frame.place(x=10, y=10)
+
+    global lang_label
+    lang_label = Label(lang_frame, text=get_lang_text("LANG"))
+    lang_label.pack(side = LEFT, fill = BOTH)
+
+    global lang_combo
+    lang_combo = ttk.Combobox(lang_frame, values=get_translated_list(get_languages()))
+    lang_combo.set(get_lang_text(args.language))
+    lang_combo.pack(side = RIGHT, fill = BOTH)
+    lang_combo.bind("<<ComboboxSelected>>", change_language)
+
+    rotate_frame = Frame(top)
+    rotate_frame.place(x=10, y=40)
+
+    global rotate_label
+    rotate_label = Label(rotate_frame, text=get_lang_text("ROTATE"))
+    rotate_label.pack(side = LEFT, fill = BOTH)
+
+    rotate_entry = Entry(rotate_frame, bd=1)
+    rotate_entry.insert(0, args.rotate)
+    rotate_entry.pack(side = RIGHT, fill = BOTH)
+
+    clean_frame = Frame(top)
+    clean_frame.place(x=10, y=70)
+
+    global clean_label
+    clean_label = Label(clean_frame, text=get_lang_text("CLEAN"))
+    clean_label.pack(side = LEFT, fill = BOTH)
+
+    if args.clean:
+        clean_var = IntVar(value=1)
+    else:
+        clean_var = IntVar(value=0)
+
+    clean = Checkbutton(clean_frame, variable=clean_var)
+    clean.pack(side = RIGHT, fill = BOTH)
+
+    shop_frame = Frame(top)
+    shop_frame.place(x=10, y=100)
+
+    global shop_label
+    shop_label = Label(shop_frame, text=get_lang_text("SHOPS"))
+    shop_label.pack(side = LEFT, anchor=NW)
+
+    shop_frame = Frame(shop_frame)
+    shop_frame.pack(side = RIGHT)
+
+    shop_list = Listbox(shop_frame, selectmode = "multiple", height=5) 
+    shop_list.pack(side = LEFT, fill = BOTH)
+
+    shop_scrollbar = Scrollbar(shop_frame)
+    shop_scrollbar.pack(side = RIGHT, fill = BOTH)
+
+    shop_list.config(yscrollcommand = shop_scrollbar.set) 
+    shop_scrollbar.config(command = shop_list.yview) 
+
+    for shop in range(len(shops)): 
+        shop_list.insert(END, shops[shop]) 
+        shop_list.select_set(shop)
+
+    progress_frame = Frame(top)
+    progress_frame.place(x=10, y=200)
+    
+    global progress_bar
+    progress_bar = ttk.Progressbar(progress_frame, orient=HORIZONTAL, length=210, mode="determinate")
+    progress_bar.pack(side = RIGHT, fill = BOTH)
+
+    button_frame = Frame(top)
+    button_frame.place(x=10, y=230)
+
+    global run_button
+    run_button = Button(button_frame, text=get_lang_text("RUN"), command=lambda: gui_set_args(args, rotate_entry, clean_var, shop_list), width=29)
+    run_button.pack(side = LEFT, fill = BOTH)
 
 main()
