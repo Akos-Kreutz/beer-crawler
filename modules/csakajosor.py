@@ -55,5 +55,4 @@ def crawl(url):
         list.append(beer.__dict__)
         print(".", end='', flush=True)
 
-    print()
     return list

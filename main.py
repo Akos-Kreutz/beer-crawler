@@ -34,7 +34,6 @@ def main():
             top.protocol("WM_DELETE_WINDOW", gui_window_closed)
             configure_gui(args)
             top.mainloop()
-
         else:
             run(args)
 
@@ -79,8 +78,10 @@ def run(args):
 
 def cli_run(crawl_threads, beers):
     for crawl_thread in crawl_threads:
-        crawl_thread.join(1)
+        while crawl_thread.is_alive():
+            crawl_thread.join(1)
 
+    print()
     create_template(beers)
 
 def gui_run(crawl_threads, beers):

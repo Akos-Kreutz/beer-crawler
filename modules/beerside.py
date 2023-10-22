@@ -52,7 +52,6 @@ def crawl(url):
         list.append(beer.__dict__)
         print(".", end='', flush=True)
 
-    print()
     return list
 
 def set_attributes(sub_soup, beer):

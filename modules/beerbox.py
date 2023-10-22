@@ -70,7 +70,6 @@ def crawl(url):
         list.append(beer.__dict__)
         print(".", end='', flush=True)
 
-    print()
     return list
 
 def get_mandatory_cookie_value():
