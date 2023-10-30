@@ -26,7 +26,7 @@ Currently supported languages:
 - `--rotate` or `-r`: The script will keep the set number of newest files in the log & report folder and delete the others. To disable this feature set the value lower than zero. By default the script will keep 5 of the newest files.
 - `--clean` or `-c`: Deletes all files from the log, report and json folders then exits.
 - `--gui` or `-g`: Starts the application in the GUI mode.
-
+- `--daily` or `-d`: Only let's the script run one time per day.
 ## Requirements
 - Python 3.10+
 - The following python packages: `requests` `html5lib` `lxml` `beautifulsoup4` `XlsxWriter`.

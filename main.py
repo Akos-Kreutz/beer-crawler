@@ -23,6 +23,10 @@ def main():
 
         set_lang_file(args.language)
 
+        if args.daily and is_path_exists("log/{}.log".format(DAY_TIMESTAMP)):
+            log_and_print(get_lang_text("DAILY_EXIT"))
+            os._exit(0)
+
         global top
         top = None
 

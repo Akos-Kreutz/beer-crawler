@@ -8,6 +8,7 @@ import argparse
 
 LANG = None
 SCRIPT_FOLDER = os.path.dirname(os.path.abspath(sys.argv[0]))
+DAY_TIMESTAMP = datetime.now().strftime("%d-%m-%Y")
 VERSION="2.0"
 class NotAvailable:
     text = "N/A"
@@ -32,8 +33,7 @@ def rotate_files(number_of_files_to_keep, folder):
         os.remove(file)
 
 def log_and_print(message):
-    file_timestamp = datetime.now().strftime("%d-%m-%Y")
-    log_file = open("{}/log/{}.log".format(SCRIPT_FOLDER, file_timestamp), "a")
+    log_file = open("{}/log/{}.log".format(SCRIPT_FOLDER, DAY_TIMESTAMP), "a")
 
     for line in message.splitlines():
         line_with_timestamp = "[{}] {}".format(datetime.now().strftime("%H:%M:%S"), line)
@@ -42,8 +42,11 @@ def log_and_print(message):
 
     log_file.close()
 
+def is_path_exists(name):
+    return os.path.exists("{}/{}".format(SCRIPT_FOLDER, name))
+
 def create_folder(name):
-    if not os.path.exists("{}/{}".format(SCRIPT_FOLDER, name)):
+    if not is_path_exists(name):
         os.makedirs("{}/{}".format(SCRIPT_FOLDER, name))
 
 def write_json(list, module):
@@ -230,6 +233,12 @@ def get_args():
                 "-g",
                 action="store_true",
                 help="Starts the application in the GUI mode.",
+            )
+    parser.add_argument(
+                "--daily",
+                "-d",
+                action="store_true",
+                help="Only let's the script run one time per day.",
             )
 
     args = parser.parse_args()
