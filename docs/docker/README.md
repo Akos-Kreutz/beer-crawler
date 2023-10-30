@@ -1,5 +1,6 @@
 # Beer Crawler
 An easy to use script to always know what new beers your local craft beer shops offer.
+[Github Repository](https://github.com/Akos-Kreutz/beer-crawler)
 
 ## Structure
 Each shop has it's own module which is called by the main script `main.py`. The main script collects all the new beer objects and creates a workbook from them under the `report` folder. The name of the workbook is the timestamp when it was created using the following format `"%d-%m-%Y_%H-%M-%S".xlsx`, like: `29-09-2023_21-59-47.xlsx`. The only exception is the `common.py` module which contains functions used by multiple modules. 
@@ -33,7 +34,8 @@ Currently supported languages:
 - The following python packages: `requests` `html5lib` `lxml` `beautifulsoup4` `XlsxWriter`.
 
 ## Execution
-You can use the script directly: `python ./main.py` or use the [docker image](https://hub.docker.com/r/kreutzakos/beercrawler).
+The recommended way of using the container is to mount both the `report`, `log` and `json` folders.
+`docker run -v [PATH_YOUR_REPORT_FOLDER]:/report -v [PATH_YOUR_LOG_FOLDER]:/log  -v [PATH_YOUR_JSON_FOLDER]:/json kreutzakos/beercrawler:latest [ARGS]`
 
 ## GUI
 > [!IMPORTANT]  
@@ -41,5 +43,5 @@ You can use the script directly: `python ./main.py` or use the [docker image](ht
 
 When using the `--gui` option, the following window will pop-up.
 <p align="left">
-  <img title="GUI" alt='GUI' src='docs/images/GUI.png' width="232px" height="297px"></img>
+  <img title="GUI" alt='GUI' src='https://raw.githubusercontent.com/Akos-Kreutz/beer-crawler/main/docs/images/GUI.png' width="232px" height="297px"></img>
 </p>
