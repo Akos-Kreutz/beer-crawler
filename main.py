@@ -1,6 +1,3 @@
-from tkinter import *
-from tkinter import ttk
-from tkinter import messagebox
 from datetime import datetime
 
 import threading
@@ -14,6 +11,15 @@ from modules.drinkstation import run as drinkstation_run
 from modules.beerside import run as beerside_run
 from modules.beerbox import run as beerbox_run
 from modules.common import *
+
+try:
+    from tkinter import *
+    from tkinter import ttk
+    from tkinter import messagebox
+except:
+    if(get_args().gui):
+        log_and_print(traceback.format_exc())
+        os._exit(0)
 
 def main():
     try:
