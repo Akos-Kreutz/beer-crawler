@@ -10,6 +10,7 @@ LANG = None
 SCRIPT_FOLDER = os.path.dirname(os.path.abspath(sys.argv[0]))
 DAY_TIMESTAMP = datetime.now().strftime("%d-%m-%Y")
 VERSION="2.0"
+ARGS = None
 class NotAvailable:
     text = "N/A"
 
@@ -257,3 +258,5 @@ def get_args():
         args.shops = args.shops[0]
 
     return args
+
+ARGS = get_args()

@@ -17,7 +17,7 @@ try:
     from tkinter import ttk
     from tkinter import messagebox
 except:
-    if(get_args().gui):
+    if(ARGS.gui):
         log_and_print(traceback.format_exc())
         os._exit(0)
 
@@ -25,27 +25,25 @@ def main():
     try:
         create_folder("log")
 
-        args = get_args()
+        set_lang_file(ARGS.language)
 
-        set_lang_file(args.language)
-
-        if args.daily and is_path_exists("log/{}.log".format(DAY_TIMESTAMP)):
+        if ARGS.daily and is_path_exists("log/{}.log".format(DAY_TIMESTAMP)):
             log_and_print(get_lang_text("DAILY_EXIT"))
             os._exit(0)
 
         global top
         top = None
 
-        if args.gui:
+        if ARGS.gui:
             top = Tk()
             top.geometry("230x265")
             top.resizable(False, False)
             top.title(get_name_with_version())
             top.protocol("WM_DELETE_WINDOW", gui_window_closed)
-            configure_gui(args)
+            configure_gui()
             top.mainloop()
         else:
-            run(args)
+            run()
 
     except KeyboardInterrupt:
         log_and_print(get_lang_text("EXIT"))
@@ -59,24 +57,24 @@ def gui_window_closed():
     top.destroy()
     os._exit(0)
 
-def run(args):
+def run():
     beers = {}
 
-    if args.clean:
+    if ARGS.clean:
         rotate_files(0, "{}/log".format(SCRIPT_FOLDER))
         rotate_files(0, "{}/report".format(SCRIPT_FOLDER))
         rotate_files(0, "{}/json".format(SCRIPT_FOLDER))
         exit()
 
-    if args.rotate < 0:
+    if ARGS.rotate < 0:
         log_and_print(get_lang_text("DISABLE_ROTATE"))
     else:
-        rotate_files(args.rotate, "{}/log".format(SCRIPT_FOLDER))
-        rotate_files(args.rotate, "{}/report".format(SCRIPT_FOLDER))
+        rotate_files(ARGS.rotate, "{}/log".format(SCRIPT_FOLDER))
+        rotate_files(ARGS.rotate, "{}/report".format(SCRIPT_FOLDER))
 
     crawl_threads = []
 
-    for shop in args.shops.split(","):
+    for shop in ARGS.shops.split(","):
         crawl_thread = threading.Thread(target = run_crawl, args = (shop, beers))
         crawl_threads.append(crawl_thread)
         crawl_thread.start()
@@ -205,25 +203,25 @@ def increase_progress():
 
     progress_bar.update()
 
-def gui_set_args(args, rotate_entry, clean_var, shop_list):
-    args.rotate = get_rotation_value(rotate_entry.get())
+def gui_set_args(rotate_entry, clean_var, shop_list):
+    ARGS.rotate = get_rotation_value(rotate_entry.get())
 
     if clean_var.get() == 0:
-        args.clean = False
+        ARGS.clean = False
     else:
-        args.clean = True
+        ARGS.clean = True
 
     list = []
     for shop in shop_list.curselection():
         list.append(shop_list.get(shop))
 
-    args.shops = ",".join(list)
+    ARGS.shops = ",".join(list)
 
     global STEP
     STEP = round(100 / (len(list) + 1)) + 1
 
     run_button['state'] = DISABLED
-    run(args)
+    run()
 
 def change_language(event):
     set_lang_file(get_lang_code(event.widget.get()))
@@ -239,8 +237,8 @@ def change_language(event):
 def is_gui_active():
     return top is not None
 
-def configure_gui(args):
-    shops = get_shops(args.shops)
+def configure_gui():
+    shops = get_shops(ARGS.shops)
 
     lang_frame = Frame(top)
     lang_frame.place(x=10, y=10)
@@ -251,7 +249,7 @@ def configure_gui(args):
 
     global lang_combo
     lang_combo = ttk.Combobox(lang_frame, values=get_translated_list(get_languages()))
-    lang_combo.set(get_lang_text(args.language))
+    lang_combo.set(get_lang_text(ARGS.language))
     lang_combo.pack(side = RIGHT, fill = BOTH)
     lang_combo.bind("<<ComboboxSelected>>", change_language)
 
@@ -263,7 +261,7 @@ def configure_gui(args):
     rotate_label.pack(side = LEFT, fill = BOTH)
 
     rotate_entry = Entry(rotate_frame, bd=1)
-    rotate_entry.insert(0, args.rotate)
+    rotate_entry.insert(0, ARGS.rotate)
     rotate_entry.pack(side = RIGHT, fill = BOTH)
 
     clean_frame = Frame(top)
@@ -273,7 +271,7 @@ def configure_gui(args):
     clean_label = Label(clean_frame, text=get_lang_text("CLEAN"))
     clean_label.pack(side = LEFT, fill = BOTH)
 
-    if args.clean:
+    if ARGS.clean:
         clean_var = IntVar(value=1)
     else:
         clean_var = IntVar(value=0)
@@ -315,7 +313,7 @@ def configure_gui(args):
     button_frame.place(x=10, y=230)
 
     global run_button
-    run_button = Button(button_frame, text=get_lang_text("RUN"), command=lambda: gui_set_args(args, rotate_entry, clean_var, shop_list), width=29)
+    run_button = Button(button_frame, text=get_lang_text("RUN"), command=lambda: gui_set_args(ARGS, rotate_entry, clean_var, shop_list), width=29)
     run_button.pack(side = LEFT, fill = BOTH)
 
 main()
