@@ -29,8 +29,6 @@
     "ROTATE": "Fájl rotálás",
     "CLEAN": "Összes adat fájl törlése",
     "SHOPS": "Boltok",
-    "WRONG_ROTATION_VALUE": "A fájl rotálásnak megadott érték rossz, az alapértelmezett érték kerül beállításra",
-    "BIG_ROTATION_VALUE": "A fájl rotálásnak megadott érték túl nagy, 365 kerül beállításra",
     "REPORT_CREATED": "A sör lista sikeresen elkészült",
     "DAILY_EXIT": "A szkript ma már lefutott"
 }

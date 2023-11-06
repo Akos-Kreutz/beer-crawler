@@ -27,6 +27,7 @@ Currently supported languages:
 - `--clean` or `-c`: Deletes all files from the log, report and json folders then exits.
 - `--gui` or `-g`: Starts the application in the GUI mode.
 - `--daily` or `-d`: Only let's the script run one time per day.
+- `--maximumbeer` or `-m`: Maximum amount of beer to check in each shop. By default the script will check up to 10 beers.
 
 ## Requirements
 - Python 3.10+

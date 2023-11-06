@@ -29,8 +29,6 @@
     "ROTATE": "Rotate",
     "CLEAN": "Clean",
     "SHOPS": "Shops",
-    "WRONG_ROTATION_VALUE": "The value provided for rotation is wrong, setting the default value",
-    "BIG_ROTATION_VALUE": "The value provided for rotation is too big, setting the value for 365",
     "REPORT_CREATED": "Report successfully created",
     "DAILY_EXIT": "The script already ran today"
 }

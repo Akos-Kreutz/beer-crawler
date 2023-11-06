@@ -28,7 +28,11 @@ def crawl(url):
     list = []
     print(end='', flush=True)
 
-    for element in soup.find_all("div", "single-product product-item text-center white-bg"):
+    elements = soup.find_all("div", "single-product product-item text-center white-bg")
+
+    for i in range(0, min(ARGS.maximumbeer, len(elements))):
+
+        element = elements[i]
 
         product_images = element.find("div", "product-images")
 

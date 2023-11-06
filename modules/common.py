@@ -158,19 +158,6 @@ def get_shops(shop_string):
 def get_name_with_version():
     return "Beer Crawler v{}".format(VERSION)
 
-def get_rotation_value(value):
-    try:
-        value = int(value)
-    except:
-        log_and_print(LANG.get("WRONG_ROTATION_VALUE"))
-        value = 5
-
-    if value > 365:
-        log_and_print(LANG.get("BIG_ROTATION_VALUE"))
-        value = 365
-
-    return value
-
 def get_translated_list(list):
     translated_list = []
 
@@ -241,6 +228,14 @@ def get_args():
                 action="store_true",
                 help="Only let's the script run one time per day.",
             )
+    parser.add_argument(
+                "--maximumbeer",
+                "-m",
+                nargs=1,
+                type=int,
+                default="10",
+                help="Maximum amount of beer to check in each shop. By default the script will check up to 10 beers.",
+            )
 
     args = parser.parse_args()
 
@@ -248,8 +243,11 @@ def get_args():
         log_and_print(get_name_with_version())
         exit()
 
+    if type(args.maximumbeer) is list:
+        args.maximumbeer = int(args.maximumbeer[0])
+
     if type(args.rotate) is list:
-        args.rotate = get_rotation_value(args.rotate[0])
+        args.rotate = int(args.rotate[0])
 
     if type(args.language) is list:
         args.language = args.language[0]

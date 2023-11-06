@@ -24,7 +24,11 @@ def crawl(url):
     list = []
     print(end='', flush=True)
 
-    for element in soup.find_all("a", "product__name-link product_link_normal"):
+    elements = soup.find_all("a", "product__name-link product_link_normal")
+
+    for i in range(0, min(ARGS.maximumbeer, len(elements))):
+
+        element = elements[i]
 
         if 'href' not in element.attrs:
             continue
