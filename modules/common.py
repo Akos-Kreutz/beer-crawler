@@ -9,7 +9,7 @@ import argparse
 LANG = None
 SCRIPT_FOLDER = os.path.dirname(os.path.abspath(sys.argv[0]))
 DAY_TIMESTAMP = datetime.now().strftime("%d-%m-%Y")
-VERSION="2.5"
+VERSION="2.6"
 ARGS = None
 class NotAvailable:
     text = "N/A"
