@@ -1,15 +1,19 @@
 from bs4 import BeautifulSoup
 from modules.common import *
+from math import ceil
 import requests
 import os
 import time
 
 MODULE_NAME = os.path.basename(__file__).replace(".py", "")
+NUMBER_OF_BEERS_PER_PAGE = 20
 
 def run():
     log_and_print(get_lang_text("BROWSE_BEERSELECTION"))
-    list = crawl("https://www.beerselection.hu/index.php?route=product/list&stockfilter=1&latest=40&page=1#content")
-    new_entries = list
+    list = []
+
+    for page_number in range(1, ceil(ARGS.beercount / NUMBER_OF_BEERS_PER_PAGE) + 1):
+        crawl("https://www.beerselection.hu/index.php?route=product/list&stockfilter=1&latest=40&page={}#content".format(page_number), list)
 
     if is_json_exists("json/" + MODULE_NAME):
         old_json = read_json("json/" + MODULE_NAME)
@@ -18,17 +22,15 @@ def run():
     write_json(list, "json/" + MODULE_NAME)
     return new_entries
 
-def crawl(url):
+def crawl(url, list):
     req = requests.get(url)
     soup = BeautifulSoup(req.text, "html.parser")
-    list = []
     print(end='', flush=True)
 
-    elements = soup.find_all("a", "img-thumbnail-link")
+    for element in soup.find_all("a", "img-thumbnail-link"):
 
-    for i in range(0, min(ARGS.maximumbeer, len(elements))):
-
-        element = elements[i]
+        if ARGS.beercount == len(list):
+            break
 
         if 'href' not in element.attrs:
             continue
@@ -58,5 +60,3 @@ def crawl(url):
 
         list.append(beer.__dict__)
         print(".", end='', flush=True)
-
-    return list

@@ -1,14 +1,16 @@
 from bs4 import BeautifulSoup
 from modules.common import *
+from math import ceil
 import requests
 import os
 import time
 
 MODULE_NAME = os.path.basename(__file__).replace(".py", "")
+NUMBER_OF_BEERS_PER_PAGE = 36
 
 def run():
     log_and_print(get_lang_text("BROWSE_ONE"))
-    list = crawl("https://onebeer.hu/sorok?infinite_page=2")
+    list = crawl("https://onebeer.hu/sorok?infinite_page={}".format(ceil(ARGS.beercount / NUMBER_OF_BEERS_PER_PAGE) + 1))
     new_entries = list
 
     if is_json_exists("json/" + MODULE_NAME):
@@ -24,11 +26,10 @@ def crawl(url):
     list = []
     print(end='', flush=True)
 
-    elements = soup.find_all("a", "product__name-link product_link_normal")
+    for element in soup.find_all("a", "product__name-link product_link_normal"):
 
-    for i in range(0, min(ARGS.maximumbeer, len(elements))):
-
-        element = elements[i]
+        if ARGS.beercount == len(list):
+            break
 
         if 'href' not in element.attrs:
             continue

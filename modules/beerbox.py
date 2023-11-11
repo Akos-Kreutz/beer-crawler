@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 from modules.common import *
+from math import ceil
 import requests
 import os
 import time
@@ -7,13 +8,16 @@ import time
 MODULE_NAME = os.path.basename(__file__).replace(".py", "")
 MANDATORY_COOKIE_NAME = "adult_only_accepted"
 MANDATORY_COOKIE_VALUE = None
+NUMBER_OF_BEERS_PER_PAGE = 21
 
 def run():
     log_and_print(get_lang_text("BROWSE_BEERBOX"))
     global MANDATORY_COOKIE_VALUE
     MANDATORY_COOKIE_VALUE = get_mandatory_cookie_value()
-    list = crawl("https://beerbox.hu/product-category/sorok-8?page=1")
-    new_entries = list
+    list = []
+
+    for page_number in range(1, ceil(ARGS.beercount / NUMBER_OF_BEERS_PER_PAGE) + 1):
+        crawl("https://beerbox.hu/product-category/sorok-8?page={}".format(page_number), list)
 
     if is_json_exists("json/" + MODULE_NAME):
         old_json = read_json("json/" + MODULE_NAME)
@@ -22,17 +26,15 @@ def run():
     write_json(list, "json/" + MODULE_NAME)
     return new_entries
 
-def crawl(url):
+def crawl(url, list):
     req = requests.get(url, cookies={MANDATORY_COOKIE_NAME:MANDATORY_COOKIE_VALUE})
     soup = BeautifulSoup(req.text, "html.parser")
-    list = []
     print(end='', flush=True)
 
-    elements = soup.find_all("div", "single-product product-item text-center white-bg")
+    for element in soup.find_all("div", "single-product product-item text-center white-bg"):
 
-    for i in range(0, min(ARGS.maximumbeer, len(elements))):
-
-        element = elements[i]
+        if ARGS.beercount == len(list):
+            break
 
         product_images = element.find("div", "product-images")
 
@@ -73,8 +75,6 @@ def crawl(url):
 
         list.append(beer.__dict__)
         print(".", end='', flush=True)
-
-    return list
 
 def get_mandatory_cookie_value():
     session = requests.session()

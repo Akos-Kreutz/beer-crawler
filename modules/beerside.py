@@ -24,12 +24,11 @@ def crawl(url):
     list = []
     print(end='', flush=True)
 
-    elements = soup.find_all("a", "butt_reszletes")
+    for element in soup.find_all("a", "butt_reszletes"):
 
-    for i in range(0, min(ARGS.maximumbeer, len(elements))):
+        if ARGS.beercount == len(list):
+            break
 
-        element = elements[i]
-        
         if 'href' not in element.attrs:
             continue
 

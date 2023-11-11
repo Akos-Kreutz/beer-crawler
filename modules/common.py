@@ -229,12 +229,12 @@ def get_args():
                 help="Only let's the script run one time per day.",
             )
     parser.add_argument(
-                "--maximumbeer",
-                "-m",
+                "--beercount",
+                "-b",
                 nargs=1,
                 type=int,
-                default="10",
-                help="Maximum amount of beer to check in each shop. By default the script will check up to 10 beers.",
+                default="20",
+                help="The amount of beer to check in each shop. By default the script will check up to 20 beers.",
             )
 
     args = parser.parse_args()
@@ -243,8 +243,8 @@ def get_args():
         log_and_print(get_name_with_version())
         exit()
 
-    if type(args.maximumbeer) is list:
-        args.maximumbeer = int(args.maximumbeer[0])
+    if type(args.beercount) is list:
+        args.beercount = int(args.beercount[0])
 
     if type(args.rotate) is list:
         args.rotate = int(args.rotate[0])
