@@ -29,6 +29,7 @@
     "ROTATE": "Fájl rotálás",
     "CLEAN": "Összes adat fájl törlése",
     "SHOPS": "Boltok",
+    "BEER_COUNT": "Sörök száma",
     "REPORT_CREATED": "A sör lista sikeresen elkészült",
     "DAILY_EXIT": "A szkript ma már lefutott"
 }

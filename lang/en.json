@@ -29,6 +29,7 @@
     "ROTATE": "Rotate",
     "CLEAN": "Clean",
     "SHOPS": "Shops",
+    "BEER_COUNT": "Beer count",
     "REPORT_CREATED": "Report successfully created",
     "DAILY_EXIT": "The script already ran today"
 }

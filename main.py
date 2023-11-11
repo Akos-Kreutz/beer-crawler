@@ -36,7 +36,7 @@ def main():
 
         if ARGS.gui:
             top = Tk()
-            top.geometry("230x265")
+            top.geometry("230x295")
             top.resizable(False, False)
             top.title(get_name_with_version())
             top.protocol("WM_DELETE_WINDOW", gui_window_closed)
@@ -202,8 +202,9 @@ def increase_progress():
 
     progress_bar.update()
 
-def gui_set_args(rotate_entry, clean_var, shop_list):
-    ARGS.rotate = get_rotation_value(rotate_entry.get())
+def gui_set_args(rotate_entry, clean_var, shop_list, beer_count_entry):
+    ARGS.rotate = int(rotate_entry.get())
+    ARGS.beercount = int(beer_count_entry.get())
 
     if clean_var.get() == 0:
         ARGS.clean = False
@@ -232,6 +233,7 @@ def change_language(event):
     clean_label.config(text=get_lang_text("CLEAN"))
     shop_label.config(text=get_lang_text("SHOPS"))
     run_button.config(text=get_lang_text("RUN"))
+    beer_count_label.config(text=get_lang_text("BEER_COUNT"))
 
 def is_gui_active():
     return top is not None
@@ -263,8 +265,19 @@ def configure_gui():
     rotate_entry.insert(0, ARGS.rotate)
     rotate_entry.pack(side = RIGHT, fill = BOTH)
 
+    beer_count_frame = Frame(top)
+    beer_count_frame.place(x=10, y=70)
+
+    global beer_count_label
+    beer_count_label = Label(beer_count_frame, text=get_lang_text("BEER_COUNT"))
+    beer_count_label.pack(side = LEFT, fill = BOTH)
+
+    beer_count_entry = Entry(beer_count_frame, bd=1)
+    beer_count_entry.insert(0, ARGS.beercount)
+    beer_count_entry.pack(side = RIGHT, fill = BOTH)
+
     clean_frame = Frame(top)
-    clean_frame.place(x=10, y=70)
+    clean_frame.place(x=10, y=100)
 
     global clean_label
     clean_label = Label(clean_frame, text=get_lang_text("CLEAN"))
@@ -279,7 +292,7 @@ def configure_gui():
     clean.pack(side = RIGHT, fill = BOTH)
 
     shop_frame = Frame(top)
-    shop_frame.place(x=10, y=100)
+    shop_frame.place(x=10, y=130)
 
     global shop_label
     shop_label = Label(shop_frame, text=get_lang_text("SHOPS"))
@@ -302,17 +315,17 @@ def configure_gui():
         shop_list.select_set(shop)
 
     progress_frame = Frame(top)
-    progress_frame.place(x=10, y=200)
+    progress_frame.place(x=10, y=230)
     
     global progress_bar
     progress_bar = ttk.Progressbar(progress_frame, orient=HORIZONTAL, length=210, mode="determinate")
     progress_bar.pack(side = RIGHT, fill = BOTH)
 
     button_frame = Frame(top)
-    button_frame.place(x=10, y=230)
+    button_frame.place(x=10, y=260)
 
     global run_button
-    run_button = Button(button_frame, text=get_lang_text("RUN"), command=lambda: gui_set_args(ARGS, rotate_entry, clean_var, shop_list), width=29)
+    run_button = Button(button_frame, text=get_lang_text("RUN"), command=lambda: gui_set_args(rotate_entry, clean_var, shop_list, beer_count_entry), width=29)
     run_button.pack(side = LEFT, fill = BOTH)
 
 main()
