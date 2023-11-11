@@ -16,6 +16,8 @@ def run():
     for page_number in range(1, ceil(ARGS.beercount / NUMBER_OF_BEERS_PER_PAGE) + 1):
         crawl("https://drinkstation.hu/craft-sorok?stockfilter=1&sort=p.date_available&order=DESC&page={}".format(page_number), list)
 
+    new_entries = list
+
     if is_json_exists("json/" + MODULE_NAME):
         old_json = read_json("json/" + MODULE_NAME)
         new_entries = get_new_entries(old_json, list)
