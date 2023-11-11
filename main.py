@@ -163,7 +163,6 @@ def create_worksheet(beers):
             worksheet.write('I' + str(counter), key)
             worksheet.write('J' + str(counter), beer['link'])
             counter += 1
-            print(".", end='', flush=True)
 
     workbook.close()
     
