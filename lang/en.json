@@ -31,5 +31,6 @@
     "SHOPS": "Shops",
     "BEER_COUNT": "Beer count",
     "REPORT_CREATED": "Report successfully created",
-    "DAILY_EXIT": "The script already ran today"
+    "DAILY_EXIT": "The script already ran today",
+    "CREATING_FOLDER": "Creating folder"
 }

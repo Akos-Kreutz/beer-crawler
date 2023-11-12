@@ -15,6 +15,14 @@ from modules.beerbox import run as beerbox_run
 # Loading up the language file is the most important step.
 set_lang_file(ARGS.language)
 
+# Creating folders
+try:
+    create_folder("log")
+    create_folder("report")
+    create_folder("json")
+except Exception:
+    log_and_print(traceback.format_exc())
+
 # Docker does not support the GUI feature.
 # If the import is not inside a try - except statement, then the script will fail to start due to not available packages.
 try:
@@ -29,8 +37,6 @@ except:
 def main():
     """Main function of the script."""
     try:
-        create_folder("log")
-
         # Determining if the script already ran today by checking if the log file exists.
         if ARGS.daily and is_path_exists("log/{}.log".format(DAY_TIMESTAMP)):
             log_and_print(get_lang_text("DAILY_EXIT"))
@@ -138,8 +144,6 @@ def create_template(beers):
 def run_crawl(shop, beers):
     """Initiates the crawl for every shops set by the user.
     The returned beer list is added to a dictionary<String, List<Beer>>."""
-    create_folder("json")
-
     match shop:
         case "beerselection":
             beers["Beerselection"] = beerselection_run()
@@ -157,8 +161,6 @@ def run_crawl(shop, beers):
 def create_worksheet(beers):
     """Creates an xlsx file containing every new beer."""
     log_and_print(get_lang_text("CREATE_REPORT"))
-
-    create_folder("report")
 
     workbook = xlsxwriter.Workbook("{}/report/{}.xlsx".format(SCRIPT_FOLDER, datetime.now().strftime("%d-%m-%Y_%H-%M-%S")))
     worksheet = workbook.add_worksheet("Beer Crawler")
