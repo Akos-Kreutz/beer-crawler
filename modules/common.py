@@ -56,8 +56,8 @@ def create_folder(name):
     """Creates the folder if it's not existing yet."""
     if not is_path_exists(name):
         path = "{}/{}".format(SCRIPT_FOLDER, name)
-        log_and_print("{}: {}".format(get_lang_text("CREATING_FOLDER"), path))
         os.makedirs(path)
+        log_and_print("{}: {}".format(get_lang_text("CREATING_FOLDER"), path))
 
 def write_json(list, module):
     """Writes a json file with UTF8 encoding."""
