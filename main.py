@@ -12,6 +12,9 @@ from modules.drinkstation import run as drinkstation_run
 from modules.beerside import run as beerside_run
 from modules.beerbox import run as beerbox_run
 
+# Loading up the language file is the most important step.
+set_lang_file(ARGS.language)
+
 # Docker does not support the GUI feature.
 # If the import is not inside a try - except statement, then the script will fail to start due to not available packages.
 try:
@@ -27,8 +30,6 @@ def main():
     """Main function of the script."""
     try:
         create_folder("log")
-
-        set_lang_file(ARGS.language)
 
         # Determining if the script already ran today by checking if the log file exists.
         if ARGS.daily and is_path_exists("log/{}.log".format(DAY_TIMESTAMP)):
