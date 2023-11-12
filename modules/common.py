@@ -269,6 +269,7 @@ def get_args():
 
     args = parser.parse_args()
 
+    # Printing out the version of the script and exiting.
     if args.version:
         log_and_print(get_name_with_version())
         exit()
