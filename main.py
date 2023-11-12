@@ -4,14 +4,16 @@ import threading
 import traceback
 import xlsxwriter
 
+from modules.common import *
 from modules.beerselection import run as beerselection_run
 from modules.csakajosor import run as csak_a_run
 from modules.onebeer import run as onebeer_run
 from modules.drinkstation import run as drinkstation_run
 from modules.beerside import run as beerside_run
 from modules.beerbox import run as beerbox_run
-from modules.common import *
 
+# Docker does not support the GUI feature.
+# If the import is not inside a try - except statement, then the script will fail to start due to not available packages.
 try:
     from tkinter import *
     from tkinter import ttk
@@ -22,11 +24,13 @@ except:
         os._exit(0)
 
 def main():
+    """Main function of the script."""
     try:
         create_folder("log")
 
         set_lang_file(ARGS.language)
 
+        # Determining if the script already ran today by checking if the log file exists.
         if ARGS.daily and is_path_exists("log/{}.log".format(DAY_TIMESTAMP)):
             log_and_print(get_lang_text("DAILY_EXIT"))
             os._exit(0)
@@ -34,6 +38,7 @@ def main():
         global top
         top = None
 
+        # Checking if the script should start in GUI or CLI mode.
         if ARGS.gui:
             top = Tk()
             top.geometry("230x295")
@@ -45,27 +50,34 @@ def main():
         else:
             run()
 
+    # Handling Keyboard Interrupts separately to avoid printing and logging a traceback.
     except KeyboardInterrupt:
         log_and_print(get_lang_text("EXIT"))
         os._exit(0)
+    # Incase of any other exception the traceback will be printed and logged.
     except Exception:
         log_and_print(traceback.format_exc())
 
 def gui_window_closed():
+    """Ensurers that the script is exited properly when in GUI mode."""
     log_and_print(get_lang_text("EXIT"))
     top.quit()
     top.destroy()
     os._exit(0)
 
 def run():
+    """Starts multiple crawl threads for the defined shops."""
     beers = {}
 
+    # In cleaning mode the script empties the log, report and json folder, then exists.
     if ARGS.clean:
         rotate_files(0, "{}/log".format(SCRIPT_FOLDER))
         rotate_files(0, "{}/report".format(SCRIPT_FOLDER))
         rotate_files(0, "{}/json".format(SCRIPT_FOLDER))
         exit()
 
+    # If the rotate value is lower than 0 the script considers it disabled.
+    # Otherwise it will rotate the give amount of files.
     if ARGS.rotate < 0:
         log_and_print(get_lang_text("DISABLE_ROTATE"))
     else:
@@ -74,6 +86,7 @@ def run():
 
     crawl_threads = []
 
+    # For each shop the script creates its own thread.
     for shop in ARGS.shops.split(","):
         crawl_thread = threading.Thread(target = run_crawl, args = (shop, beers))
         crawl_threads.append(crawl_thread)
@@ -85,22 +98,30 @@ def run():
         cli_run(crawl_threads, beers)
 
 def cli_run(crawl_threads, beers):
+    """[CLI method] waits until all the crawl threads are finished, then calls the create_template method.
+    CLI mode can use the threading module to wait until every thread is finished."""
     for crawl_thread in crawl_threads:
         while crawl_thread.is_alive():
+            # With join(1) the user can still use Keyboard Interrupts
             crawl_thread.join(1)
 
     print()
     create_template(beers)
 
 def gui_run(crawl_threads, beers):
+    """[GUI method] calls the monitor_crawl_thread method for each thread, then calls the monitor_crawl_progress method.
+    GUI mode needs to use tkinter to wait up for every thread as the GUI needs to be constantly updated by the main thread."""
     for crawl_thread in crawl_threads:
         monitor_crawl_thread(crawl_thread)
 
     monitor_crawl_progress(beers)
 
 def create_template(beers):
+    """If there is new beer found calls the create_worksheet method, otherwise calls the increase_progress method and prints out the NO_NEW_BEER message."""
     should_create_worksheet = False
 
+    # As beers are in a dictionary with the shop name as the key, the script checks the length of the the lists stored in the value.
+    # If at least one of the list is not empty the worksheet will be generated.
     for value in beers.values():
         if len(value) > 0:
             should_create_worksheet = True
@@ -114,6 +135,8 @@ def create_template(beers):
         log_and_print(get_lang_text("NO_NEW_BEER"))
 
 def run_crawl(shop, beers):
+    """Initiates the crawl for every shops set by the user.
+    The returned beer list is added to a dictionary<String, List<Beer>>."""
     create_folder("json")
 
     match shop:
@@ -131,6 +154,7 @@ def run_crawl(shop, beers):
             beers["Beerbox"] = beerbox_run()
 
 def create_worksheet(beers):
+    """Creates an xlsx file containing every new beer."""
     log_and_print(get_lang_text("CREATE_REPORT"))
 
     create_folder("report")
@@ -171,18 +195,24 @@ def create_worksheet(beers):
     create_message_box(get_lang_text("REPORT_CREATED"))
 
 def monitor_crawl_thread(crawl_thread):
+    """[GUI method] used to monitor a single thread. If the thread is still active after 100 milliseconds calls itself, thus creating a loop.
+    If the thread is finished updates the progress bar by calling the increase_progress method."""
     if crawl_thread.is_alive():
         top.after(100, lambda: monitor_crawl_thread(crawl_thread))
     else:
         increase_progress()
 
 def monitor_crawl_progress(beers):
+    """[GUI method] used to mintor the progress of the crawl process by checking the value of the progressbar.
+    If the value is not high enough, after 100 milliseconds calls itself, thus creating a loop.
+    If all threads are finished calls the create_template method."""
     if progress_bar['value'] < (100 - (STEP + 1)):
         top.after(100, lambda: monitor_crawl_progress(beers))
     else:
         create_template(beers)
 
 def create_message_box(message):
+    """[GUI method] creates a popup messagebox signaling the end of the crawl to the user."""
     if not is_gui_active():
         return
 
@@ -194,6 +224,7 @@ def create_message_box(message):
     run_button['state'] = NORMAL
 
 def increase_progress():
+    """[GUI method] if GUI is active increases the value of the progressbar by one step."""
     if not is_gui_active():
         return
     
@@ -203,6 +234,9 @@ def increase_progress():
     progress_bar.update()
 
 def gui_set_args(rotate_entry, clean_var, shop_list, beer_count_entry):
+    """[GUI method] sets the values of the argument variables based on the GUI.
+    Also sets the value for the STEP variable based on the number of shops.
+    After the argument values set calls the run method."""
     ARGS.rotate = int(rotate_entry.get())
     ARGS.beercount = int(beer_count_entry.get())
 
@@ -217,13 +251,16 @@ def gui_set_args(rotate_entry, clean_var, shop_list, beer_count_entry):
 
     ARGS.shops = ",".join(list)
 
+    # Global variable represents the value of one shop in the progressbar.
     global STEP
     STEP = round(100 / (len(list) + 1)) + 1
 
+    # Disabling the run button to avoid multiple runs.
     run_button['state'] = DISABLED
     run()
 
 def change_language(event):
+    """[GUI method] when new language is selected in the language combobox, loads up the new lang file and changes the text on every UI element."""
     set_lang_file(get_lang_code(event.widget.get()))
 
     lang_combo.config(values=get_translated_list(get_languages()))
@@ -236,11 +273,13 @@ def change_language(event):
     beer_count_label.config(text=get_lang_text("BEER_COUNT"))
 
 def is_gui_active():
+    """Returns if the script is running in UI mode or not."""
     return top is not None
 
 def configure_gui():
-    shops = get_shops(ARGS.shops)
+    """[GUI method] creates all the GUI elements and sets their value based on the argument values."""
 
+    # Language combobox
     lang_frame = Frame(top)
     lang_frame.place(x=10, y=10)
 
@@ -254,6 +293,7 @@ def configure_gui():
     lang_combo.pack(side = RIGHT, fill = BOTH)
     lang_combo.bind("<<ComboboxSelected>>", change_language)
 
+    # Rotate entry
     rotate_frame = Frame(top)
     rotate_frame.place(x=10, y=40)
 
@@ -265,6 +305,7 @@ def configure_gui():
     rotate_entry.insert(0, ARGS.rotate)
     rotate_entry.pack(side = RIGHT, fill = BOTH)
 
+    # Beer Count entry
     beer_count_frame = Frame(top)
     beer_count_frame.place(x=10, y=70)
 
@@ -276,6 +317,7 @@ def configure_gui():
     beer_count_entry.insert(0, ARGS.beercount)
     beer_count_entry.pack(side = RIGHT, fill = BOTH)
 
+    # Cleaning checkbutton
     clean_frame = Frame(top)
     clean_frame.place(x=10, y=100)
 
@@ -291,6 +333,7 @@ def configure_gui():
     clean = Checkbutton(clean_frame, variable=clean_var)
     clean.pack(side = RIGHT, fill = BOTH)
 
+    # Shops listbox
     shop_frame = Frame(top)
     shop_frame.place(x=10, y=130)
 
@@ -310,10 +353,13 @@ def configure_gui():
     shop_list.config(yscrollcommand = shop_scrollbar.set) 
     shop_scrollbar.config(command = shop_list.yview) 
 
+    shops = get_shops_as_list(ARGS.shops)
+
     for shop in range(len(shops)): 
         shop_list.insert(END, shops[shop]) 
         shop_list.select_set(shop)
 
+    # Progressbar
     progress_frame = Frame(top)
     progress_frame.place(x=10, y=230)
     
@@ -321,6 +367,7 @@ def configure_gui():
     progress_bar = ttk.Progressbar(progress_frame, orient=HORIZONTAL, length=210, mode="determinate")
     progress_bar.pack(side = RIGHT, fill = BOTH)
 
+    # Run button
     button_frame = Frame(top)
     button_frame.place(x=10, y=260)
 

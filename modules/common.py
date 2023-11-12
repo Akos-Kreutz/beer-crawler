@@ -12,9 +12,11 @@ DAY_TIMESTAMP = datetime.now().strftime("%d-%m-%Y")
 VERSION="2.6"
 ARGS = None
 class NotAvailable:
+    """Class used for convenient error handling."""
     text = "N/A"
 
 class Beer:
+    """Class used for storing each attribute of a beer."""
     name = None
     brewery = None 
     package = None
@@ -26,6 +28,8 @@ class Beer:
     link = None
 
 def rotate_files(number_of_files_to_keep, folder):
+    """Keeps the given amount of files in the folder and deletes all the others.
+    Starts the counting from the newest file in the folder."""
     files = sorted(Path(folder).iterdir(), key=os.path.getmtime, reverse=True)
 
     for i in range(number_of_files_to_keep, len(files)):
@@ -34,6 +38,7 @@ def rotate_files(number_of_files_to_keep, folder):
         os.remove(file)
 
 def log_and_print(message):
+    """Appends the message to the log file and prints it out."""
     log_file = open("{}/log/{}.log".format(SCRIPT_FOLDER, DAY_TIMESTAMP), "a")
 
     for line in message.splitlines():
@@ -44,27 +49,30 @@ def log_and_print(message):
     log_file.close()
 
 def is_path_exists(name):
+    """Returns if the given path is exists or not."""
     return os.path.exists("{}/{}".format(SCRIPT_FOLDER, name))
 
 def create_folder(name):
+    """Creates the folder if it's not existing yet."""
     if not is_path_exists(name):
         os.makedirs("{}/{}".format(SCRIPT_FOLDER, name))
 
 def write_json(list, module):
+    """Writes a json file with UTF8 encoding."""
     new_json = json.dumps(list, ensure_ascii=False, indent=2).encode('utf8')
 
     with open("{}/{}.json".format(SCRIPT_FOLDER, module), "w", encoding='utf8') as outfile:
         outfile.write(new_json.decode())
 
 def read_json(module):
+     """Reads an UTF8 encoded json file and returns the object."""
      file =  open("{}/{}.json".format(SCRIPT_FOLDER, module), "r", encoding='utf8')
 
      return json.load(file)
 
-def is_json_exists(module):
-    return os.path.exists("{}/{}.json".format(SCRIPT_FOLDER, module))
-
 def get_new_entries(old_json, new_json):
+    """Compares two set of beer object list using their name and link attributes.
+    Return a new list containing beers that are present in the new list, but not in the old one."""
     old_beers = []
     new_beers = []
 
@@ -79,18 +87,24 @@ def get_new_entries(old_json, new_json):
     return new_beers
 
 def get_element(root_object, element_name, attributes={}, **kwargs):
+    """Returns the element by name and optionally by attributes and args.
+    If the object is None or NotAvailable returns NotAvailable."""
     if root_object is not None and root_object is not NotAvailable:
         return root_object.find(element_name, attributes, **kwargs)
     else:
         return NotAvailable
     
 def get_elements(root_object, element_name, attributes={}, **kwargs):
+    """Returns a list of elements by name and optionally by attributes and args.
+    If the object is None or NotAvailable returns NotAvailable."""
     if root_object is not None and root_object is not NotAvailable:
         return root_object.findAll(element_name, attributes, **kwargs)
     else:
         return NotAvailable
     
 def get_element_attribute(element, attribute):
+    """Returns the attribute of an element.
+    If the element is None or the attribute is not found returns NotAvailable."""
     if element is None:
         return NotAvailable.text
 
@@ -102,6 +116,8 @@ def get_element_attribute(element, attribute):
         return attr
     
 def get_tag_attribute(tag, attribute):
+    """Returns the attribute of a tag.
+    If the tag is None, NotAvailable or the attribute is not found returns NotAvailable."""
     if tag is None or tag is NotAvailable or attribute not in tag.attrs.keys():
         return NotAvailable.text
         
@@ -111,19 +127,23 @@ def get_tag_attribute(tag, attribute):
         return tag[attribute]
 
 def get_formatted_name(name, brewery):
+    """Removes any empty space, indication of package, brewery, abc and capacity from the string.
+    Returns the modified string."""
     name = name.split("|")[0]
     name = re.sub(r'[0-9]+,[0-9]+[l,L]{1}', '', name)
     name = re.sub(r'[0-9]+[m,M]{1}[l,L]{1}', '', name)
     name = re.sub(r'[0-9]*\,*\.*[0-9]+[%]{1}', '', name)
     name = re.sub(r'\,*\s+\(.+\)', '', name)
 
+    # If there is an ampersand in the string, the script will not remove the brewery name.
     if ("&" in name or brewery == NotAvailable.text or name.count(brewery) > 1):
         return name.strip()
 
     return name.replace(brewery, "").strip()
 
 def set_lang_file(lang):
-    if not is_json_exists("lang/{}".format(lang)):
+    """Checks if the language file exists and loads it up into the LANG global variable."""
+    if not is_path_exists("lang/{}.json".format(lang)):
         print("Language file not found, loading english language file.")
         global LANG
         LANG = read_json("lang/en")
@@ -132,12 +152,15 @@ def set_lang_file(lang):
     LANG = read_json("lang/{}".format(lang))
 
 def get_lang_text(text):
+    """Returns the text in the loaded language.
+    If the text is not found returns the NO_TEXT message."""
     if text in LANG.keys():
         return LANG.get(text)
     
     return LANG.get("NO_TEXT")
 
 def get_lang_code(code):
+    """Returns the code of a language by its name."""
     values = list(LANG.values())
 
     if code in values:
@@ -147,7 +170,8 @@ def get_lang_code(code):
     print("Language code not found, returning english language code.")
     return "en"
 
-def get_shops(shop_string):
+def get_shops_as_list(shop_string):
+    """Return the comma separated string of shops as a string list."""
     shops = []
 
     for shop in shop_string.split(","):
@@ -156,9 +180,11 @@ def get_shops(shop_string):
     return shops
 
 def get_name_with_version():
+    """Returns the version of the script with its name."""
     return "Beer Crawler v{}".format(VERSION)
 
 def get_translated_list(list):
+    """Returns a list of translated text."""
     translated_list = []
 
     for element in list:
@@ -167,6 +193,7 @@ def get_translated_list(list):
     return translated_list
 
 def get_languages():
+    """Returns a list of available languages."""
     files = sorted(Path("{}/lang".format(SCRIPT_FOLDER)).iterdir())
     langs = []
 
@@ -176,6 +203,7 @@ def get_languages():
     return langs
 
 def get_args():
+    """Returns the processed arguments."""
     parser = argparse.ArgumentParser(
                 description="A Crawler in search of new craft beers.",
                 add_help=True,
