@@ -37,25 +37,6 @@ except:
 def main():
     """Main function of the script."""
     try:
-        # In cleaning mode the script empties the log, report and json folder, then exists.
-        if ARGS.clean:
-            rotate_files(0, "{}/log".format(SCRIPT_FOLDER))
-            rotate_files(0, "{}/report".format(SCRIPT_FOLDER))
-            rotate_files(0, "{}/json".format(SCRIPT_FOLDER))
-            exit()
-
-        # If the rotate value is lower than 0 the script considers it disabled.
-        # Otherwise it will rotate the give amount of files.
-        if ARGS.rotate < 0:
-            log_and_print(get_lang_text("DISABLE_ROTATE"))
-        else:
-            rotate_files(ARGS.rotate, "{}/log".format(SCRIPT_FOLDER))
-            rotate_files(ARGS.rotate, "{}/report".format(SCRIPT_FOLDER))
-            # Determining if the script already ran today by checking if the log file exists.
-            if ARGS.daily and is_path_exists("log/{}.log".format(DAY_TIMESTAMP)):
-                log_and_print(get_lang_text("DAILY_EXIT"))
-                os._exit(0)
-
         global top
         top = None
 
@@ -87,7 +68,27 @@ def gui_window_closed():
     os._exit(0)
 
 def run():
-    """Starts multiple crawl threads for the defined shops."""
+    """Handles argument related calls that can be configures by argument or in the GUI.
+    Starts multiple crawl threads for the defined shops."""
+    # In cleaning mode the script empties the log, report and json folder, then exists.
+    if ARGS.clean:
+        rotate_files(0, "{}/log".format(SCRIPT_FOLDER))
+        rotate_files(0, "{}/report".format(SCRIPT_FOLDER))
+        rotate_files(0, "{}/json".format(SCRIPT_FOLDER))
+        exit()
+
+    # If the rotate value is lower than 0 the script considers it disabled.
+    # Otherwise it will rotate the give amount of files.
+    if ARGS.rotate < 0:
+        log_and_print(get_lang_text("DISABLE_ROTATE"))
+    else:
+        rotate_files(ARGS.rotate, "{}/log".format(SCRIPT_FOLDER))
+        rotate_files(ARGS.rotate, "{}/report".format(SCRIPT_FOLDER))
+        # Determining if the script already ran today by checking if the log file exists.
+        if ARGS.daily and is_path_exists("log/{}.log".format(DAY_TIMESTAMP)):
+            log_and_print(get_lang_text("DAILY_EXIT"))
+            os._exit(0)
+
     beers = {}
     crawl_threads = []
 
