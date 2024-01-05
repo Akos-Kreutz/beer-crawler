@@ -85,7 +85,7 @@ def run():
         rotate_files(ARGS.rotate, "{}/log".format(SCRIPT_FOLDER))
         rotate_files(ARGS.rotate, "{}/report".format(SCRIPT_FOLDER))
         # Determining if the script already ran today by checking if the log file exists.
-        if ARGS.daily and is_path_exists("log/{}.log".format(DAY_TIMESTAMP)):
+        if ARGS.daily and is_file_contains_string("log/{}.log".format(DAY_TIMESTAMP), "#"):
             log_and_print(get_lang_text("DAILY_EXIT"))
             os._exit(0)
 
@@ -139,6 +139,8 @@ def create_template(beers):
         increase_progress()
         create_message_box(get_lang_text("NO_NEW_BEER"))
         log_and_print(get_lang_text("NO_NEW_BEER"))
+
+    log_and_print("#")
 
 def run_crawl(shop, beers):
     """Initiates the crawl for every shops set by the user.

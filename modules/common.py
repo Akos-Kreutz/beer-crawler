@@ -52,6 +52,14 @@ def is_path_exists(name):
     """Returns if the given path is exists or not."""
     return os.path.exists("{}/{}".format(SCRIPT_FOLDER, name))
 
+def is_file_contains_string(path, string):
+    """Returns if the given string is in the file or not."""
+    if(is_path_exists(path)):
+        with open("{}/{}".format(SCRIPT_FOLDER, path)) as file:
+            return string in file.read()
+
+    return False
+
 def create_folder(name):
     """Creates the folder if it's not existing yet."""
     if not is_path_exists(name):
