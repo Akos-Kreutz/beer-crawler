@@ -153,8 +153,6 @@ def run_crawl(shop, beers):
             beers["One Beer"] = onebeer_run()
         case "drinkstation":
             beers["Drink Station"] = drinkstation_run()
-        case "beerside":
-            beers["Beerside"] = beerside_run()
         case "beerbox":
             beers["Beerbox"] = beerbox_run()
 
