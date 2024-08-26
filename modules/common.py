@@ -231,8 +231,8 @@ def get_args():
                 "-s",
                 nargs=1,
                 type=str,
-                default="beerselection,csakajosor,onebeer,drinkstation,beerside,beerbox",
-                help="Determines which shops are searched. The value needs to be comma separated, like: beerselection,csakajosor. Available values: beerselection,csakajosor,onebeer,drinkstation,beerside,beerbox.",
+                default="beerselection,csakajosor,onebeer,drinkstation,beerbox",
+                help="Determines which shops are searched. The value needs to be comma separated, like: beerselection,csakajosor. Available values: beerselection,csakajosor,onebeer,drinkstation,beerbox.",
             )
     parser.add_argument(
                 "--version",

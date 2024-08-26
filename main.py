@@ -9,7 +9,6 @@ from modules.beerselection import run as beerselection_run
 from modules.csakajosor import run as csak_a_run
 from modules.onebeer import run as onebeer_run
 from modules.drinkstation import run as drinkstation_run
-from modules.beerside import run as beerside_run
 from modules.beerbox import run as beerbox_run
 
 # Loading up the language file is the most important step.
