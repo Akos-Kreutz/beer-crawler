@@ -59,7 +59,7 @@ def crawl(url):
                 beer.package = get_element_attribute(get_element(get_element(sub_soup, "div", {"id": "page_artdet_product_param_spec_3304727"}), "div", "artdet__spec-param-value"), "text")
                 beer.country = NotAvailable.text
                 beer.brewery = get_element_attribute(get_element(get_element(sub_soup, "div", {"id": "page_artdet_product_param_spec_3304712"}), "div", "artdet__spec-param-value"), "text")
-                beer.name = get_formatted_name(get_element_attribute(get_element(sub_soup, "h1", "artdet__name line-clamp--3-12 mb-0"), "text"), beer.brewery)
+                beer.name = get_formatted_name(get_element_attribute(get_element(sub_soup, "h1", "artdet__name line-clamp--3-12"), "text"), beer.brewery)
 
                 price = get_element_attribute(get_element(sub_soup, "span", "artdet__price-discount product-price--sale"), "text")
                 if price == NotAvailable.text:

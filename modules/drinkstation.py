@@ -16,7 +16,7 @@ def run():
 
     # The script will crawl enough pages to retrieve the specified amount of beers.
     for page_number in range(1, ceil(ARGS.beercount / NUMBER_OF_BEERS_PER_PAGE) + 1):
-        crawl("https://drinkstation.hu/craft-sorok?stockfilter=1&sort=p.date_available&order=DESC&page={}".format(page_number), list)
+        crawl("https://drinkstation.hu/kraft-sorok?stockfilter=1&sort=p.date_available&order=DESC&page={}".format(page_number), list)
 
     # Sets the value for the new_entries list in case it's a first run.
     new_entries = list
