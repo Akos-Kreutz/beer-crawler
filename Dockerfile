@@ -1,4 +1,4 @@
-FROM python:3.14.0a7-alpine3.21
+FROM python:3.14.2-alpine3.23
 
 COPY --chown=root:root main.py /main.py
 COPY --chown=root:root lang /lang
