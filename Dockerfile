@@ -13,6 +13,8 @@ RUN apk add --no-cache \
     libffi-dev \
     openssl-dev
 
+RUN pip install --upgrade pip
+
 RUN pip install requests html5lib lxml beautifulsoup4 XlsxWriter
 
 ENTRYPOINT [ "python", "/main.py" ]
