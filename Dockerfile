@@ -4,6 +4,8 @@ COPY --chown=root:root main.py /main.py
 COPY --chown=root:root lang /lang
 COPY --chown=root:root modules /modules
 
+RUN apk upgrade --no-cache
+
 RUN apk add --no-cache \
     gcc \
     musl-dev \
