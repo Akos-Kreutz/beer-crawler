@@ -1,19 +1,13 @@
-FROM python:3.14.2-alpine3.23
+FROM kreutzakos/python-base:latest
+
+USER root
 
 COPY --chown=root:root main.py /main.py
 COPY --chown=root:root lang /lang
 COPY --chown=root:root modules /modules
 
-RUN apk upgrade --no-cache
-
-RUN apk add --no-cache \
-    gcc \
-    musl-dev \
-    libxml2-dev \
-    libxslt-dev \
-    python3-dev \
-    libffi-dev \
-    openssl-dev
+RUN apt update \
+    && apt upgrade -y --no-install-recommends
 
 RUN pip install --upgrade pip
 
