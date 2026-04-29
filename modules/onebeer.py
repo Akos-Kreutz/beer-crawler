@@ -65,8 +65,7 @@ def crawl(url):
                 if price == NotAvailable.text:
                     price = get_element_attribute(get_element(sub_soup, "span", "artdet__price-base-value"), "text")
 
-                beer.price = price.replace(" Ft", "").replace(" ", "")
-                beer.currency = "Ft"
+                beer.currency = "HUF"
                 try_counter = 3
             except KeyboardInterrupt:
                 raise

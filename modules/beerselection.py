@@ -61,8 +61,8 @@ def crawl(url, list):
                 beer.country = get_element_attribute(get_element(sub_soup, "td", "param-value featured-param-label featured-szaramazas"), "text")
                 beer.brewery = get_element_attribute(get_element_attribute(get_element(sub_soup, "tr", "product-parameter-row manufacturer-param-row"), "span"), "text")
                 beer.name = get_formatted_name(get_element_attribute(get_element(sub_soup, "h1", "page-head-title product-page-head-title position-relative"), "text"), beer.brewery)
-                beer.price = get_tag_attribute(get_element(get_element(sub_soup, "div", "product-page-price-line"), "meta", itemprop="price"), "content") 
-                beer.currency = get_tag_attribute(get_element(get_element(sub_soup, "div", "product-page-price-line"), "meta", itemprop="pricecurrency"), "content")
+                beer.price = get_element_attribute(get_element(get_element(sub_soup, "div", "product-page-right-box product-page-price-wrapper"), "span"), "text")
+                beer.currency = "HUF"
                 try_counter = 3
             except KeyboardInterrupt:
                 raise

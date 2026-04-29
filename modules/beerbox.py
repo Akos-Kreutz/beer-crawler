@@ -76,7 +76,7 @@ def crawl(url, list):
                 beer.style = style_and_abv.replace(beer.abv, "").strip()
                 set_package_brewery_country_attributes(sub_soup, beer)
                 beer.name = get_formatted_name(get_element_attribute(get_element(sub_soup, "h3", "breadcum-page-title text-center"), "text"), beer.brewery)
-                beer.price = get_element_attribute(get_element(get_element(sub_soup, "ul", "d-sm-flex align-items-sm-center"), "span"), "text").replace("Ft", "").replace(" ", "")
+                beer.price = get_element_attribute(get_element(get_element(sub_soup, "ul", "d-sm-flex align-items-sm-center"), "span"), "text")
                 beer.currency = "HUF"
                 try_counter = 3
             except KeyboardInterrupt:

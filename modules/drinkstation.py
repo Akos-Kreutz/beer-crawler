@@ -58,7 +58,7 @@ def crawl(url, list):
                 beer.link = element['href']
                 beer.style = NotAvailable.text
                 beer.country = NotAvailable.text
-                beer.brewery = get_element_attribute(get_element_attribute(get_element(sub_soup, "tr", "product-parameter-row manufacturer-param-row"), "span"), "text")
+                beer.brewery = NotAvailable.text
                 beer.price = get_tag_attribute(get_element(get_element(sub_soup, "div", "product-page-price-line"), "meta", itemprop="price"), "content") 
                 beer.currency = get_tag_attribute(get_element(get_element(sub_soup, "div", "product-page-price-line"), "meta", itemprop="pricecurrency"), "content")
 

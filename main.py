@@ -189,7 +189,7 @@ def create_worksheet(beers):
             worksheet.write('D' + str(counter), beer['style'])
             worksheet.write('E' + str(counter), beer['abv'])
             worksheet.write('F' + str(counter), beer['package'])
-            worksheet.write('G' + str(counter), beer['price'])
+            worksheet.write('G' + str(counter), beer['price'].replace(".", "").replace("Ft", "").replace(" ", ""))
             worksheet.write('H' + str(counter), beer['currency'])
             worksheet.write('I' + str(counter), key)
             worksheet.write('J' + str(counter), beer['link'])
