@@ -35,7 +35,7 @@ def run():
 
 def crawl(url, list):
     """Creates a list of Beer objects."""
-    req = requests.get(url, cookies={MANDATORY_COOKIE_NAME:MANDATORY_COOKIE_VALUE})
+    req = requests.get(url, timeout=(5, 30), cookies={MANDATORY_COOKIE_NAME:MANDATORY_COOKIE_VALUE})
     soup = BeautifulSoup(req.text, "html.parser")
     print(end='', flush=True)
 
@@ -62,7 +62,7 @@ def crawl(url, list):
         # Tries the crawl up to three times to eliminate breaks caused by network errors.
         while try_counter < 3:
             try:
-                sub_soup = BeautifulSoup(requests.get(sub_element['href'], cookies={MANDATORY_COOKIE_NAME:MANDATORY_COOKIE_VALUE}).text, "html.parser")
+                sub_soup = BeautifulSoup(requests.get(sub_element['href'], cookies={MANDATORY_COOKIE_NAME:MANDATORY_COOKIE_VALUE}, timeout=(5, 30)).text, "html.parser")
                 beer = Beer()
 
                 beer.link = sub_element['href']
@@ -92,7 +92,8 @@ def crawl(url, list):
 def get_mandatory_cookie_value():
     """Returns the cookie required to crawl the site."""
     session = requests.session()
-    session.get("https://beerbox.hu/accept-adult-only")
+    session.headers.update({"Connection": "close"})
+    session.get("https://beerbox.hu/accept-adult-only", timeout=(5, 20))
     return requests.utils.dict_from_cookiejar(session.cookies).get(MANDATORY_COOKIE_NAME)
 
 def set_package_brewery_country_attributes(sub_soup, beer):

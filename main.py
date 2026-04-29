@@ -3,6 +3,8 @@ from datetime import datetime
 import threading
 import traceback
 import xlsxwriter
+import faulthandler
+import sys
 
 from modules.common import *
 from modules.beerselection import run as beerselection_run
@@ -32,6 +34,10 @@ except:
     if(ARGS.gui):
         log_and_print(traceback.format_exc())
         os._exit(0)
+
+# Setting fault handler to be able to log segfaults and other fatal errors.
+faulthandler.enable(file=sys.stderr, all_threads=True)
+faulthandler.dump_traceback_later(60, repeat=True)
 
 def main():
     """Main function of the script."""
@@ -93,7 +99,7 @@ def run():
 
     # For each shop the script creates its own thread.
     for shop in ARGS.shops.split(","):
-        crawl_thread = threading.Thread(target = run_crawl, args = (shop, beers))
+        crawl_thread = threading.Thread(target = run_crawl, args = (shop, beers), daemon=True)
         crawl_threads.append(crawl_thread)
         crawl_thread.start()
 

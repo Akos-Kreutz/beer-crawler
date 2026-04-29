@@ -33,7 +33,7 @@ def run():
 
 def crawl(url, list):
     """Creates a list of Beer objects."""
-    req = requests.get(url)
+    req = requests.get(url, timeout=(5, 30))
     soup = BeautifulSoup(req.text, "html.parser")
     print(end='', flush=True)
 
@@ -52,7 +52,7 @@ def crawl(url, list):
         # Tries the crawl up to three times to eliminate breaks caused by network errors.
         while try_counter < 3:
             try:
-                sub_soup = BeautifulSoup(requests.get(element['href']).text, "html.parser")
+                sub_soup = BeautifulSoup(requests.get(element['href'], timeout=(5, 30)).text, "html.parser")
                 beer = Beer()
 
                 beer.link = element['href']
